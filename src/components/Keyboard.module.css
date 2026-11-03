@@ -38,6 +38,15 @@
   grid-column: span 3;
 }
 
+/* Folga extra entre Apagar e OK contra toques errados; sai só destas duas teclas. */
+.erase {
+  margin-inline-end: 0.15rem;
+}
+
+.submit {
+  margin-inline-start: 0.15rem;
+}
+
 .key:active {
   transform: translateY(1px);
 }

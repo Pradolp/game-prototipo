@@ -121,6 +121,30 @@ test.describe('em 360px', () => {
     }
   })
 
+  test('a 3ª linha vai do Z ao OK, com folga extra entre ⌫ e OK', async ({ page }) => {
+    const box = async (name: string) => {
+      const found = await page.getByRole('button', { name, exact: true }).boundingBox()
+      if (found === null) throw new Error(`tecla sem caixa: ${name}`)
+      return found
+    }
+    const [q, p, z, x, m, erase, ok] = await Promise.all(
+      ['Q', 'P', 'Z', 'X', 'M', 'Apagar', 'OK, enviar palavra'].map(box),
+    )
+    if (!q || !p || !z || !x || !m || !erase || !ok) throw new Error('tecla faltando')
+
+    expect(z.x).toBeCloseTo(q.x, 0)
+    expect(ok.x + ok.width).toBeCloseTo(p.x + p.width, 0)
+    expect(z.y).toBe(ok.y)
+    expect(erase.y).toBe(ok.y)
+    expect(erase.x).toBeGreaterThan(m.x)
+    expect(ok.x).toBeGreaterThan(erase.x)
+
+    const letterGap = x.x - (z.x + z.width)
+    expect(erase.x - (m.x + m.width)).toBeCloseTo(letterGap, 0)
+    expect(ok.x - (erase.x + erase.width)).toBeGreaterThanOrEqual(letterGap + 4)
+    expect(z.width).toBeCloseTo(q.width, 1)
+  })
+
   test('a linha do meio do teclado fica centralizada', async ({ page }) => {
     const first = await page.getByRole('button', { name: 'A', exact: true }).boundingBox()
     const last = await page.getByRole('button', { name: 'L', exact: true }).boundingBox()

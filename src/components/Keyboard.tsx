@@ -41,19 +41,10 @@ export function Keyboard({ letters, onAction }: KeyboardProps) {
     <div className={styles.keyboard} role="group" aria-label="Teclado">
       {TOP_ROW.map(letterKey)}
       {MIDDLE_ROW.map(letterKey)}
-      <button
-        type="button"
-        className={`${styles.key} ${styles.wide} ${styles.submit}`}
-        aria-label="OK, enviar palavra"
-        onMouseDown={keepFocus}
-        onClick={() => onAction({ type: 'submitGuess' })}
-      >
-        OK
-      </button>
       {BOTTOM_ROW.map(letterKey)}
       <button
         type="button"
-        className={`${styles.key} ${styles.wide}`}
+        className={`${styles.key} ${styles.wide} ${styles.erase}`}
         aria-label="Apagar"
         onMouseDown={keepFocus}
         onClick={() => onAction({ type: 'deleteLetter' })}
@@ -68,6 +59,15 @@ export function Keyboard({ letters, onAction }: KeyboardProps) {
             strokeLinejoin="round"
           />
         </svg>
+      </button>
+      <button
+        type="button"
+        className={`${styles.key} ${styles.wide} ${styles.submit}`}
+        aria-label="OK, enviar palavra"
+        onMouseDown={keepFocus}
+        onClick={() => onAction({ type: 'submitGuess' })}
+      >
+        OK
       </button>
     </div>
   )
