@@ -3,7 +3,7 @@
 | Arquivo | Conteúdo | Palavras |
 |---|---|---|
 | `src/data/valid.ts` | Tudo que é aceito como chute | 18.088 |
-| `src/data/answers.ts` | Palavras comuns que podem ser sorteadas | 1.418 |
+| `src/data/answers.ts` | Palavras comuns que podem ser sorteadas | 1.412 |
 
 Os dois arquivos são gerados por `scripts/build-wordlist.ts`. Não edite à mão: mude a curadoria em `scripts/wordlist-exclusions.ts` e gere de novo.
 
@@ -52,7 +52,7 @@ Está em `scripts/wordlist-exclusions.ts`, depois de leitura manual de todas as 
 - **Palavrões sem sentido inocente:** saem de `valid` e de `answers`. A jogadora que digitar um deles vê "palavra não encontrada".
 - **Termos ofensivos, sexuais ou delicados com outro sentido** (`pinto`, `veado`, `bicha`, `gozar`): são aceitos como chute, mas nunca sorteados.
 - **Conjugações:** ficam fora de `answers`. Uma regra de terminações (`-ou`, `-eu`, `-am`, `-mos`, `-sse`...) atua nas formas geradas só por verbos, e uma lista explícita cobre o resto. Infinitivos e particípios ficam. Todas continuam aceitas como chute.
-- **Vetos do autor** (`morte`, `matar`, `negro`, `preta`, `gorda`, `burro`, `macho`): aceitos como chute, mas nunca sorteados.
+- **Vetos do autor** (`morte`, `morta`, `morto`, `matar`, `negro`, `negra`, `preto`, `preta`, `gordo`, `gorda`, `burro`, `burra`, `macho`): aceitos como chute, mas nunca sorteados.
 - **Fora de `answers` também:** grafias de Portugal (`facto`, `ecrãs`), estrangeirismos não aportuguesados (`mouse`, `hobby`) e palavras corretas, mas raras (`bisel`, `melro`).
 
 Para vetar uma palavra, inclua-a em `ANSWER_ONLY_EXCLUSIONS` e gere de novo.
@@ -61,7 +61,7 @@ Para vetar uma palavra, inclua-a em `ANSWER_ONLY_EXCLUSIONS` e gere de novo.
 
 Palavras diferentes podem ter a mesma forma sem acento, e o jogo compara só a forma normalizada. Cada forma normalizada aparece **uma só vez** em cada lista, com uma forma de exibição.
 
-- **Colisões:** 1.364 em `valid` e 181 em `answers` (157 com duas formas, 23 com três e 1 com quatro).
+- **Colisões:** 1.364 em `valid` e 180 em `answers` (156 com duas formas, 23 com três e 1 com quatro).
 - **Regra, em ordem:**
   1. forma listada em `PREFERRED_DISPLAY_FORMS` (`bebês` vence `bebés`, de Portugal);
   2. forma mais frequente no corpus;
