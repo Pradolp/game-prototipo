@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import type { LetterResult } from '../game/evaluate'
-import { WORD_LENGTH } from '../game/rules'
 import { FLIP_MS, FLIP_STAGGER_MS } from '../styles/motion'
 import { keepFocus } from './keepFocus'
+import { slotLabel } from './tileLabels'
 import styles from './Tile.module.css'
 
 const RESULT_LABEL: Record<LetterResult, string> = {
@@ -25,12 +25,6 @@ interface TileProps {
 function tileLabel(letter: string, result: LetterResult | null): string {
   if (letter === '') return 'vazia'
   return result ? `letra ${letter}, ${RESULT_LABEL[result]}` : `letra ${letter}`
-}
-
-function slotLabel(index: number, letter: string, selected: boolean): string {
-  const content = letter === '' ? 'vazia' : `letra ${letter}`
-  const position = `casa ${index + 1} de ${WORD_LENGTH}`
-  return `${position}, ${content}${selected ? ', selecionada' : ''}`
 }
 
 export function Tile({
@@ -56,6 +50,7 @@ export function Tile({
         aria-label={slotLabel(slot.index, letter, selected)}
         aria-pressed={selected}
         data-active
+        data-slot
         data-selected={selected || undefined}
         onMouseDown={keepFocus}
         onClick={slot.onSelect}

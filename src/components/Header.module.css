@@ -1,7 +1,7 @@
 /* Duas linhas no celular: a linha colorida da aba passa entre elas. */
 .header {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
     'tabs reset'
     'tools tools';
@@ -37,8 +37,8 @@
 .tool {
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: var(--touch-target);
+  height: var(--touch-target);
   padding: 0;
   border: 0;
   border-radius: var(--radius-control);
@@ -51,8 +51,11 @@
   color: var(--color-text);
 }
 
-/* Com espaço, tudo em uma linha: abas e ícones à esquerda, ↻ sozinho à direita. */
-@media (min-width: 30rem) {
+/*
+ * Com espaço, tudo em uma linha: abas e ícones à esquerda, ↻ sozinho à direita.
+ * Em media query, rem vale sempre 16px: este limite já considera a maior fonte.
+ */
+@media (min-width: 32.5rem) {
   .header {
     grid-template-columns: auto auto 1fr;
     grid-template-areas: 'tabs tools reset';

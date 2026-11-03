@@ -105,7 +105,7 @@ describe('App', () => {
     const dialog = await screen.findByRole('dialog')
     expect(within(dialog).getByText('Você acertou!')).toBeInTheDocument()
     expect(within(dialog).getByText(getDailyWord(TODAY).toUpperCase())).toBeInTheDocument()
-    expect(within(dialog).getByText('Sequência').previousSibling).toHaveTextContent('1')
+    expect(within(dialog).getByText('Sequência').nextSibling).toHaveTextContent('1')
     expect(dialog).toHaveTextContent('Próxima palavra do dia em 12:00:00')
   })
 
@@ -296,7 +296,7 @@ describe('App', () => {
       if (remaining > 0) await finishExtra(user, state.word)
     }
 
-    expect(resetButton()).toHaveAccessibleName('Novas palavras amanhã')
+    expect(resetButton()).toHaveAccessibleName('Novas palavras amanhã, 0 trocas')
     await user.click(resetButton())
     expect(screen.getByRole('status')).toHaveTextContent('Novas palavras amanhã')
   })

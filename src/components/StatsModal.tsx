@@ -62,8 +62,8 @@ export function StatsModal({ game, stats, streak, now, onClose, onNextWord }: St
       <dl className={styles.figures}>
         {figures.map(({ label, value }) => (
           <div key={label} className={styles.figure}>
-            <dd>{value}</dd>
             <dt>{label}</dt>
+            <dd>{value}</dd>
           </div>
         ))}
       </dl>

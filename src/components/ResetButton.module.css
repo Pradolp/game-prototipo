@@ -1,9 +1,9 @@
 .reset {
   justify-self: end;
   align-self: center;
-  min-width: 3.4rem;
-  min-height: 2.75rem;
-  padding: 0.25rem 0.7rem;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  padding: 0.25rem var(--tab-inset);
   border: 2px solid var(--color-accent);
   border-radius: var(--radius-control);
   background: var(--color-accent);

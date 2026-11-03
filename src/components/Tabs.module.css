@@ -7,15 +7,16 @@
 }
 
 .tab {
-  min-height: 2.75rem;
-  padding: 0.35rem 0.7rem;
+  min-height: var(--touch-target);
+  padding: 0.35rem var(--tab-inset);
   border: var(--tab-line) solid transparent;
   border-bottom: 0;
   border-radius: var(--radius-control) var(--radius-control) 0 0;
   background: none;
   color: var(--color-text-muted);
   font-size: 1rem;
-  white-space: nowrap;
+  /* Em tela muito estreita com fonte grande, o rótulo quebra em vez de empurrar o ↻. */
+  line-height: 1.15;
   cursor: pointer;
 }
 

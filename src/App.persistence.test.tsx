@@ -61,9 +61,7 @@ describe('ao recarregar', () => {
     const next = setup()
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     await next.user.click(screen.getByRole('button', { name: 'Estatísticas' }))
-    expect(within(screen.getByRole('dialog')).getByText('Jogos').previousSibling).toHaveTextContent(
-      '1',
-    )
+    expect(within(screen.getByRole('dialog')).getByText('Jogos').nextSibling).toHaveTextContent('1')
   })
 
   it('funciona sem storage', async () => {

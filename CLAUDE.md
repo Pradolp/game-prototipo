@@ -24,7 +24,7 @@ A **diferença principal** é a aba **CHUTE**, ao lado da aba **Palavra do dia**
 | Estado | `useReducer` + hooks próprios | O jogo é pequeno, não precisa de Redux/Zustand |
 | Persistência | **localStorage** (sem backend, sem login) | Tudo fica no aparelho |
 | Testes unitários | **Vitest + Testing Library** | Lógica do jogo 100% testada |
-| Testes E2E | **Playwright** | Testa o fluxo real no navegador, inclusive em tamanho de celular |
+| Testes E2E | **Playwright** + `@axe-core/playwright` | Testa o fluxo real no navegador, inclusive em tamanho de celular, e audita a acessibilidade |
 | Lint/format | ESLint + Prettier | — |
 | Hospedagem | **Vercel** ou **GitHub Pages** (estático, gratuito) | Definir na fase de deploy |
 | Futuro | PWA (`vite-plugin-pwa`) → depois, se precisar, Capacitor para Android/iOS | Fora do MVP |
@@ -81,9 +81,15 @@ Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Pal
 - Sessão do dia: data, partida do dia e partida de CHUTE (se houver). Cada partida guarda tipo (`daily` | `extra`), resposta, chutes, status, `slots` e `cursor`. A aba aberta não é salva, porque o jogo sempre abre em "Palavra do dia".
 - Resets: `{ date, used, played }` (`played` guarda as palavras de CHUTE do dia, para não repetir).
 - Estatísticas: jogos, vitórias, sequência atual, melhor sequência, data da última vitória na palavra do dia, distribuição por número de tentativas.
-- Preferências: modo daltônico, tamanho da fonte.
+- Preferências: modo daltônico, tamanho da fonte (`normal`, `large`, `huge`).
 - Sempre envolva leitura e escrita em `try/catch` e use valores padrão quando o storage falhar.
 - **Virada do dia com a página aberta:** ao voltar para a aba do navegador (`visibilitychange`, `focus`) e antes de cada ação, o jogo confere `todayKey`. Se o dia mudou, inicia a sessão nova e volta para "Palavra do dia". Jogada ou reset feitos nesse instante são descartados, porque miravam a palavra que saiu da tela.
+
+### Configurações
+- Ícone de engrenagem ao lado de Ajuda e Estatísticas, com o nome acessível "Configurações". Abre uma janela com o modo daltônico e o tamanho da fonte (Normal, Grande e Muito grande).
+- As opções se aplicam na hora, sem botão de salvar, e valem também ao recarregar. Elas ficam em `data-color-blind` e `data-font-size`, no elemento `<html>`.
+- **Em todos os tamanhos, em 360×640, o tabuleiro e o teclado ficam visíveis sem rolagem**, sem rolagem horizontal e com as casas em pelo menos 44×44px. Por isso os controles do cabeçalho têm altura em px (`--touch-target`), o recuo de abas e ↻ encolhe com a fonte (`--tab-inset`) e as medidas estruturais do layout não usam `rem`. Com a casa no limite do espaço, o que cresce nela é a letra (`--tile-letter`).
+- Em media query, `rem` vale sempre 16px, sem acompanhar a fonte escolhida. Esses limites precisam já considerar o maior tamanho. `e2e/settings.spec.ts` confere o layout nos três tamanhos, em várias telas, de celular em pé a deitado e computador.
 
 ## Paleta: Tokyo Night
 Decisão do autor: o jogo usa as cores do tema **Tokyo Night**, o mesmo do terminal dele (Ptyxis). O tema é escuro e é o padrão do jogo. Valores exatos da paleta do terminal:
@@ -107,10 +113,14 @@ Regras de uso (contraste medido em WCAG):
 - Use só os tokens; não escreva cores soltas nos componentes.
 
 ## Acessibilidade (a jogadora é a prioridade)
-- Fonte grande e legível; tamanho ajustável nas preferências.
+- Fonte grande e legível; tamanho ajustável na janela de Configurações.
 - Casas, botões e demais alvos de toque com **pelo menos 44×44px**.
-- **Exceção:** a largura das teclas de letra do teclado virtual. Em 360px, as 10 colunas do QWERTY dão cerca de 31px por tecla. O autor preferiu o layout conhecido pela jogadora, e em troca a tecla tem pelo menos 52px de altura, usa toda a largura da tela e cresce em telas maiores. `OK` e `⌫` continuam com 44px ou mais.
+- **Exceção de altura:** em telas com menos de cerca de 585px de altura em pé (celular com a barra do navegador aberta), as casas ficam abaixo de 44px. É melhor ver todo o tabuleiro e o teclado do que rolar a página.
+- **Exceção de largura:** a largura das teclas de letra do teclado virtual. Em 360px, as 10 colunas do QWERTY dão cerca de 31px por tecla. O autor preferiu o layout conhecido pela jogadora, e em troca a tecla tem pelo menos 52px de altura, usa toda a largura da tela e cresce em telas maiores. `OK` e `⌫` continuam com 44px ou mais.
 - Contraste AA no mínimo; modo daltônico.
+- Foco visível em todo controle e navegação completa pelo teclado. Nas casas, Tab chega à linha atual, Enter seleciona, as setas levam o foco junto com a seleção e Enter na casa já selecionada envia o chute.
+- A casa selecionada e as letras da linha são anunciadas para leitores de tela em uma região `aria-live`. Com o foco nas casas, quem anuncia é o próprio foco.
+- A auditoria com axe (`e2e/accessibility.spec.ts`) não pode ter problema sério nem crítico.
 - Nada depende só da cor: o resultado de cada letra também vai em `aria-label`.
 - Animações curtas e respeito a `prefers-reduced-motion`.
 - Funciona bem em tela de celular (360px) e de computador.
@@ -129,7 +139,7 @@ src/
   game/        # lógica pura, sem React (evaluate, normalize, daily, resets, session, stats) + testes
   data/        # listas de palavras
   storage/     # wrapper do localStorage
-  components/  # Board, Row, Tile, Keyboard, Header, Tabs, ResetButton, Modal, Toast
+  components/  # Board, Row, Tile, Keyboard, Header, Tabs, ResetButton, Modal, SettingsModal, Toast
   hooks/       # useGame, usePersistentState
   styles/      # tokens/variáveis, temas
 e2e/           # testes Playwright

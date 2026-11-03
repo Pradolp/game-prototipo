@@ -3,6 +3,7 @@
  * com 9 letras, fica centralizada começando na 2ª coluna.
  */
 .keyboard {
+  container-type: inline-size;
   display: grid;
   grid-template-columns: repeat(20, minmax(0, 1fr));
   grid-auto-rows: clamp(52px, 7.5dvh, 3.75rem);
@@ -22,7 +23,8 @@
   background: var(--color-surface);
   color: var(--color-on-surface);
   font-weight: 700;
-  font-size: 1.15rem;
+  /* O limite em cqw segura a letra dentro da tecla quando o teclado fica estreito. */
+  font-size: min(1.15rem, 7cqw);
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;

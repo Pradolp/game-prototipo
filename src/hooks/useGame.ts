@@ -10,7 +10,7 @@ import { getCurrentStreak, updateStats, type Stats } from '../game/stats'
 import { loadSession, loadStats, saveSession, saveStats } from '../storage/progress'
 import { prefersReducedMotion, REVEAL_MS } from '../styles/motion'
 
-export type ModalKind = 'help' | 'stats'
+export type ModalKind = 'help' | 'stats' | 'settings'
 /** Aviso em tela. O texto de cada um fica no componente `Toast`. */
 export type NoticeKind = GuessFeedback | 'finishWord' | 'noResets'
 
@@ -94,7 +94,8 @@ function applyAction(state: AppState, action: AppAction): AppState {
       return pressReset(state, action.roll)
     case 'endReveal': {
       const finished = activeGame(state.session).status !== 'playing'
-      return { ...state, revealRow: null, modal: finished ? 'stats' : state.modal }
+      // Uma janela aberta durante a virada continua aberta: o resultado não a substitui.
+      return { ...state, revealRow: null, modal: state.modal ?? (finished ? 'stats' : null) }
     }
     case 'openModal':
       return { ...state, modal: action.modal }

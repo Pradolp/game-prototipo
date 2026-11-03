@@ -10,7 +10,7 @@
 }
 
 .board {
-  --gap: clamp(0.25rem, 1.4cqmin, 0.45rem);
+  --gap: clamp(4px, 1.4cqmin, 8px);
   --tile-size: min((100cqw - 4 * var(--gap)) / 5, (100cqh - 5 * var(--gap)) / 6, 5.25rem);
 
   display: grid;

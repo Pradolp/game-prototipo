@@ -3,10 +3,12 @@ import { Header } from './components/Header'
 import { HelpModal } from './components/HelpModal'
 import { Keyboard } from './components/Keyboard'
 import { StatsModal } from './components/StatsModal'
+import { SettingsModal } from './components/SettingsModal'
 import { PANEL_ID, tabId } from './components/tabIds'
 import { Toast } from './components/Toast'
 import type { Rng } from './game/rules'
 import { useGame } from './hooks/useGame'
+import { usePreferences } from './hooks/usePersistentState'
 import { usePhysicalKeyboard } from './hooks/usePhysicalKeyboard'
 import styles from './App.module.css'
 
@@ -20,6 +22,7 @@ const systemNow = () => new Date()
 function App({ now = systemNow, rng = Math.random }: AppProps) {
   const ui = useGame(now, rng)
   const { game } = ui
+  const [preferences, setPreferences] = usePreferences()
   usePhysicalKeyboard(ui.play, ui.modal === null)
 
   return (
@@ -49,6 +52,13 @@ function App({ now = systemNow, rng = Math.random }: AppProps) {
         <Keyboard letters={ui.letters} onAction={ui.play} />
       </main>
       {ui.modal === 'help' && <HelpModal onClose={ui.closeModal} />}
+      {ui.modal === 'settings' && (
+        <SettingsModal
+          preferences={preferences}
+          onChange={setPreferences}
+          onClose={ui.closeModal}
+        />
+      )}
       {ui.modal === 'stats' && (
         <StatsModal
           game={game}

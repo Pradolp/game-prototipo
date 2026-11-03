@@ -25,4 +25,28 @@
   --radius-sheet: 0.85rem;
   --tab-line: 3px;
   --gutter: 0.5rem;
+  /* Em px: os controles do cabeçalho não crescem com a fonte e não tiram lugar do tabuleiro. */
+  --touch-target: 50px;
+  /* Altura da letra em relação à casa: a casa já ocupa todo o espaço, a letra é que cresce. */
+  --tile-letter: 0.62;
+  /* Recuo lateral de abas e ↻: encolhe com a fonte, para o cabeçalho caber em 360px. */
+  --tab-inset: 0.7rem;
+}
+
+/* Modo daltônico: certa fica azul; a marca da casa "lugar errado" continua igual. */
+:root[data-color-blind='true'] {
+  --color-correct: var(--color-accent);
+}
+
+/* Tamanho da fonte: o rem acompanha a escolha, menos em media query, onde vale 16px. */
+:root[data-font-size='large'] {
+  font-size: 20px;
+  --tile-letter: 0.66;
+  --tab-inset: 0.6rem;
+}
+
+:root[data-font-size='huge'] {
+  font-size: 22px;
+  --tile-letter: 0.7;
+  --tab-inset: 8px;
 }

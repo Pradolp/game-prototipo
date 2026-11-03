@@ -62,6 +62,13 @@ export function Header({
             strokeLinecap="round"
           />
         </ToolButton>
+        <ToolButton label="Configurações" onClick={() => onOpenModal('settings')}>
+          <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <circle cx="12" cy="12" r="3" />
+            <circle cx="12" cy="12" r="7" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" />
+          </g>
+        </ToolButton>
       </div>
       {active === 'extra' && (
         <div className={styles.reset}>

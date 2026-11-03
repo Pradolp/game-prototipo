@@ -14,7 +14,7 @@
   color: var(--tile-fg);
   font-family: var(--font-word);
   font-weight: 700;
-  font-size: calc(var(--tile-size, 2.5rem) * 0.62);
+  font-size: calc(var(--tile-size, 2.5rem) * var(--tile-letter));
   line-height: 1;
   padding: 0;
   user-select: none;
