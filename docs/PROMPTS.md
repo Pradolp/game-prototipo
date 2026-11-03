@@ -45,7 +45,7 @@ Leia o CLAUDE.md. Execute a Fase 2, escrevendo os testes ANTES da implementaçã
 - isValidGuess(guess).
 - todayKey(now, tz='America/Sao_Paulo') -> 'YYYY-MM-DD'. Teste a virada do dia perto da meia-noite de Brasília (UTC-3).
 - getDailyWord(dateKey): determinística, com ordem embaralhada por seed fixa.
-- Resets: canReset(state, today), applyReset(state, today, rng) sorteia uma palavra diferente da do dia e das já jogadas hoje, com máximo de 3 por dia e renovação quando muda o dia.
+- Resets: canReset(state, today, status) só libera com a palavra terminada, applyReset(state, today, status, rng) sorteia uma palavra diferente da do dia e das já jogadas hoje, com máximo de 3 por dia e renovação quando muda o dia.
 - Estatísticas: updateStats(stats, result).
 - Reducer do jogo: digitar letra, apagar, enviar chute (inválido não gasta tentativa), vitória, derrota.
 Tudo com datas e RNG injetáveis. Apague o src/game/example.test.ts. Pronto quando a cobertura de src/game/ for >= 95%.
@@ -55,20 +55,21 @@ Tudo com datas e RNG injetáveis. Apague o src/game/example.test.ts. Pronto quan
 ```
 Leia o CLAUDE.md. Use a skill frontend-design. Execute a Fase 3:
 - Use a paleta Tokyo Night exatamente como está na seção "Paleta" do CLAUDE.md, com os tokens em src/styles/, e não invente outra. A identidade visual continua PRÓPRIA (nome provisório "Palavrinha"), acolhedora e com fonte grande, sem copiar o layout de Termo/Wordle.
-- Header: título no centro, ícones de Ajuda e Estatísticas, e no CANTO SUPERIOR DIREITO o botão Reset mostrando quantos restam (ex.: "↻ 3"). Com 0, ele fica desabilitado com o texto "Novas palavras amanhã". Indique se a partida atual é "Palavra do dia" ou "Palavra extra 1/3".
+- Header: duas abas lado a lado no CANTO SUPERIOR ESQUERDO, "Palavra do dia" e "CHUTE", sempre abrindo em "Palavra do dia"; título no centro; ícones de Ajuda e Estatísticas. No CANTO SUPERIOR DIREITO, SÓ na aba CHUTE, o botão ↻ mostrando quantos resets restam (ex.: "↻ 3"). Com a palavra em andamento, ele fica desativado e, ao tocar, mostra "Termine esta palavra para trocar". Com a palavra terminada, fica ativo e troca direto, sem confirmação. Sem resets, fica desativado com "Novas palavras amanhã", inclusive com a palavra em andamento. Na aba Palavra do dia não há botão ↻.
 - Board 6x5 com animação de virar a letra (respeitando prefers-reduced-motion), teclado virtual em PT-BR com teclas >= 44px e cores por letra, e suporte ao teclado físico.
-- Toasts ("Palavra não encontrada", "Faltam letras"), modal de ajuda, modal de fim de jogo (mostra a palavra acentuada, as estatísticas e quanto falta para a próxima palavra do dia) e confirmação ao resetar no meio da partida.
+- Toasts ("Palavra não encontrada", "Faltam letras"), modal de ajuda, modal de fim de jogo (mostra a palavra acentuada, as estatísticas e quanto falta para a próxima palavra do dia). A sequência exibida vem de `getCurrentStreak`, não do valor salvo.
 - Use os hooks e a lógica da Fase 2; nenhuma regra de jogo dentro dos componentes.
 Teste no navegador com Playwright em 360px e em desktop e me mande screenshots.
 ```
 
 ## Fase 4: Persistência
 ```
-Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas palavrinha:v1:* e try/catch. Persista a partida atual, os resets, as estatísticas e as preferências. Escreva testes E2E com Playwright:
+Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas palavrinha:v1:* e try/catch. Persista a sessão do dia (partidas das duas abas e resets), as estatísticas e as preferências. A aba aberta não é salva: o jogo sempre abre em "Palavra do dia". Escreva testes E2E com Playwright:
 (1) jogar 2 chutes, recarregar e ver os chutes preservados;
-(2) usar os 3 resets e confirmar que o botão fica desabilitado;
+(2) na aba CHUTE, confirmar que o ↻ fica desativado com a palavra em andamento, terminar cada palavra, usar os 3 resets e confirmar que o botão fica desabilitado;
 (3) simular a virada do dia (relógio do Playwright) e ver os resets voltarem a 3 e a palavra do dia mudar;
-(4) vencer e conferir as estatísticas atualizadas.
+(4) vencer e conferir as estatísticas atualizadas;
+(5) confirmar que o botão ↻ não aparece na aba Palavra do dia.
 ```
 
 ## Fase 5: Acessibilidade e polimento

@@ -2,7 +2,7 @@
 
 Jogo web de adivinhar palavras em português, no estilo dos jogos de palavra do dia (5 letras, dicas por cores).
 Feito para uma jogadora principal (a mãe do autor), que gosta do gênero mas acha pouco ter só uma palavra por dia.
-A **diferença principal** é o botão **Reset**, no canto superior direito, que sorteia uma palavra extra **até 3 vezes por dia**.
+A **diferença principal** é a aba **CHUTE**, ao lado da aba **Palavra do dia**: ela traz uma palavra a mais por dia e o botão **↻**, que a troca **até 3 vezes por dia**.
 
 > O jogo precisa ter **nome, visual e textos próprios**. Não copie nome, logo, cores exatas, layout ou textos de jogos existentes (Termo, Wordle etc.). A mecânica do gênero pode ser usada.
 
@@ -32,6 +32,7 @@ npm install
 npm run dev        # servidor local
 npm run build      # build de produção
 npm run test       # Vitest
+npm run test:coverage   # Vitest com cobertura (mínimo de 95% em src/game/)
 npm run test:e2e   # Playwright
 npm run lint
 npm run build:wordlist   # regenera src/data/ (veja docs/WORDLIST.md)
@@ -45,18 +46,30 @@ npm run build:wordlist   # regenera src/data/ (veja docs/WORDLIST.md)
 - **Validação:** o chute precisa estar na lista de palavras válidas; se não estiver, mostre uma mensagem e não gaste a tentativa.
 - **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico.
 
-### Palavra do dia + Resets
-- **Palavra do dia:** é determinística pela data no fuso `America/Sao_Paulo`. Calcule o índice a partir do número de dias desde uma data-época e de uma ordem embaralhada fixa (com seed) da lista de respostas. A palavra precisa ser a mesma ao recarregar a página.
-- **Reset (canto superior direito):** sorteia uma palavra **diferente** da palavra do dia e das já jogadas hoje. São **3 resets por dia**, e o contador volta a 3 à meia-noite (`America/Sao_Paulo`).
-  - O botão mostra quantos restam (ex.: "↻ 2"). Com 0, fica desabilitado e explica: "Novas palavras amanhã".
-  - Resetar no meio de uma partida pede **confirmação** ("Trocar de palavra? A partida atual será perdida").
-  - O estado da partida extra também sobrevive ao recarregar a página.
+### Abas: Palavra do dia e CHUTE
+Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Palavra do dia", e trocar de aba não muda nenhum progresso.
+
+- **Palavra do dia:** uma por dia, **sem reset**, renova à meia-noite (`America/Sao_Paulo`). É determinística pela data: calcule o índice a partir do número de dias desde uma data-época e de uma ordem embaralhada fixa (com seed) da lista de respostas. A palavra precisa ser a mesma ao recarregar a página. É a única que conta para a sequência de dias.
+- **CHUTE:** ao abrir a aba pela primeira vez no dia, sorteia uma palavra **sem gastar reset**, diferente da palavra do dia, e registra em `played`.
+  - O botão **↻** fica no canto superior direito e aparece **só nesta aba**, com **3 resets por dia**. O contador volta a 3 à meia-noite (`America/Sao_Paulo`).
+  - O botão mostra quantos restam (ex.: "↻ 2").
+  - O reset só fica disponível **depois que a palavra atual termina**: a jogadora acertou ou usou as 6 tentativas. Com a partida em andamento, é proibido trocar de palavra.
+  - Estados do ↻: em andamento, fica desativado e, ao tocar, mostra "Termine esta palavra para trocar"; terminada, fica ativo e troca direto, sem confirmação; sem resets, fica desativado com "Novas palavras amanhã". Sem resets, esta última mensagem vale também com a partida em andamento.
+  - O reset troca a palavra e não repete a do dia nem as já jogadas hoje.
+  - Palavra terminada conta em jogos, vitórias e distribuição de tentativas, nunca na sequência.
+  - Na virada do dia, a palavra em andamento é descartada.
+  - O estado da aba também sobrevive ao recarregar a página.
+- **No código**, o tipo interno continua `extra`; só a interface usa o nome CHUTE.
 - O limite fica no localStorage e é burlável se os dados forem limpos. **Isso é aceitável**: é um jogo de família, não competitivo.
 
+### Sequência de dias
+- Conta apenas a **palavra do dia**. A aba CHUTE nunca altera a sequência.
+- Se a palavra do dia ficar sem jogar ou sem vencer no dia, a sequência zera. No dia seguinte a uma vitória, ela segue valendo até o fim do dia, enquanto a palavra do dia ainda pode ser vencida.
+
 ### Persistência (localStorage, chave versionada `palavrinha:v1:*`)
-- Partida atual: data, tipo (`daily` | `extra`), resposta, chutes, status.
-- Resets: `{ date, used }`.
-- Estatísticas: jogos, vitórias, sequência atual, melhor sequência, distribuição por número de tentativas.
+- Sessão do dia: data, partida do dia e partida de CHUTE (se houver). Cada partida guarda tipo (`daily` | `extra`), resposta, chutes e status. A aba aberta não é salva, porque o jogo sempre abre em "Palavra do dia".
+- Resets: `{ date, used, played }` (`played` guarda as palavras de CHUTE do dia, para não repetir).
+- Estatísticas: jogos, vitórias, sequência atual, melhor sequência, data da última vitória na palavra do dia, distribuição por número de tentativas.
 - Preferências: modo daltônico, tamanho da fonte.
 - Sempre envolva leitura e escrita em `try/catch` e use valores padrão quando o storage falhar.
 
@@ -100,10 +113,10 @@ Regras de uso (contraste medido em WCAG):
 ## Estrutura sugerida
 ```
 src/
-  game/        # lógica pura, sem React (evaluate, normalize, daily, resets, stats) + testes
+  game/        # lógica pura, sem React (evaluate, normalize, daily, resets, session, stats) + testes
   data/        # listas de palavras
   storage/     # wrapper do localStorage
-  components/  # Board, Row, Tile, Keyboard, Header, ResetButton, Modal, Toast
+  components/  # Board, Row, Tile, Keyboard, Header, Tabs, ResetButton, Modal, Toast
   hooks/       # useGame, usePersistentState
   styles/      # tokens/variáveis, temas
 e2e/           # testes Playwright
