@@ -1,0 +1,42 @@
+Avisos de terceiros: listas de palavras do jogo
+================================================
+
+Código-fonte, listas geradas e o gerador:
+https://github.com/Pradolp/game-prototipo
+(src/data/, scripts/build-wordlist.ts e docs/WORDLIST.md)
+
+
+1. VERO: dicionário pt_BR do LibreOffice
+----------------------------------------
+Usado em: src/data/valid.ts e src/data/answers.ts (formas derivadas do
+dicionário por expansão de afixos, filtro de 5 letras e curadoria).
+
+Copyright (C) 2006 - 2013 by Raimundo Santos Moura <raimundo.smoura@gmail.com>
+e colaboradores do Projeto VERO.
+
+Aviso original (README_en.txt):
+
+    This dictionary is under continuous development by Raimundo Moura and his
+    team. It is licensed under the terms of the GNU Lesser General Public
+    License version 3 (LGPLv3), as published by the Free Software Foundation,
+    and Mozilla Public License as published by The Mozilla Foundation. The
+    credits are available at
+    http://pt-br.libreoffice.org/projetos/projeto-vero-verificador-ortografico/
+    and you can find new releases at http://extensions.libreoffice.org
+
+Fonte: https://github.com/LibreOffice/dictionaries/tree/4f1df64b2e8e14751aa7c2205d170ca016071315/pt_BR
+
+Textos das licenças, nesta mesma pasta: licenses/LGPL-3.0.txt,
+licenses/GPL-3.0.txt (exigido pela LGPLv3) e licenses/MPL-2.0.txt.
+
+
+2. Tatoeba: frases em português
+-------------------------------
+Usado em: scripts/data/tatoeba-por-freq.tsv (contagem de ocorrências, usada
+para escolher as palavras comuns de src/data/answers.ts). Nenhuma frase é
+redistribuída.
+
+Fonte: Tatoeba (https://tatoeba.org), colaboradores do projeto.
+Licença: Creative Commons Atribuição 2.0 França (CC BY 2.0 FR)
+https://creativecommons.org/licenses/by/2.0/fr/
+Alteração feita: as frases foram reduzidas a contagens de palavras de 5 letras.

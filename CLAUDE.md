@@ -34,6 +34,7 @@ npm run build      # build de produção
 npm run test       # Vitest
 npm run test:e2e   # Playwright
 npm run lint
+npm run build:wordlist   # regenera src/data/ (veja docs/WORDLIST.md)
 ```
 
 ## Regras do jogo (MVP)
@@ -92,7 +93,8 @@ Regras de uso (contraste medido em WCAG):
 ## Lista de palavras
 - Duas listas em `src/data/`: `answers` (palavras comuns, curadas, ~1.000–2.000) e `valid` (todas as palavras de 5 letras aceitas como chute).
 - Cada entrada guarda a forma acentuada; a forma normalizada é gerada em tempo de build ou de carga.
-- Fonte candidata: `github.com/pythonprobr/palavras`, filtrada por 5 letras e sem nomes próprios. **Verifique a licença antes de usar** e registre a fonte em `docs/WORDLIST.md`.
+- Fontes: dicionário VERO (LibreOffice) com afixos expandidos e frequência contada nas frases do Tatoeba. Licenças, critérios e como regerar em `docs/WORDLIST.md`; os avisos exigidos ficam em `public/THIRD_PARTY_NOTICES.txt`.
+- Regerar `answers` muda a sequência das palavras do dia.
 - A lista de respostas evita palavrões, termos ofensivos, siglas e palavras muito raras.
 
 ## Estrutura sugerida

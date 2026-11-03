@@ -35,3 +35,6 @@ npm-debug.log*
 
 # Configurações locais do Claude Code
 .claude/settings.local.json
+
+# Dados baixados (não confiáveis) do gerador de listas
+.wordlist-cache/

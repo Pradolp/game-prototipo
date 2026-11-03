@@ -5,3 +5,9 @@ test-results
 package-lock.json
 CLAUDE.md
 docs
+.wordlist-cache
+src/data/valid.ts
+src/data/answers.ts
+scripts/data
+public/licenses
+public/THIRD_PARTY_NOTICES.txt
