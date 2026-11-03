@@ -3,7 +3,7 @@
 | Arquivo | Conteúdo | Palavras |
 |---|---|---|
 | `src/data/valid.ts` | Tudo que é aceito como chute | 18.088 |
-| `src/data/answers.ts` | Palavras comuns que podem ser sorteadas | 1.425 |
+| `src/data/answers.ts` | Palavras comuns que podem ser sorteadas | 1.418 |
 
 Os dois arquivos são gerados por `scripts/build-wordlist.ts`. Não edite à mão: mude a curadoria em `scripts/wordlist-exclusions.ts` e gere de novo.
 
@@ -52,6 +52,7 @@ Está em `scripts/wordlist-exclusions.ts`, depois de leitura manual de todas as 
 - **Palavrões sem sentido inocente:** saem de `valid` e de `answers`. A jogadora que digitar um deles vê "palavra não encontrada".
 - **Termos ofensivos, sexuais ou delicados com outro sentido** (`pinto`, `veado`, `bicha`, `gozar`): são aceitos como chute, mas nunca sorteados.
 - **Conjugações:** ficam fora de `answers`. Uma regra de terminações (`-ou`, `-eu`, `-am`, `-mos`, `-sse`...) atua nas formas geradas só por verbos, e uma lista explícita cobre o resto. Infinitivos e particípios ficam. Todas continuam aceitas como chute.
+- **Vetos do autor** (`morte`, `matar`, `negro`, `preta`, `gorda`, `burro`, `macho`): aceitos como chute, mas nunca sorteados.
 - **Fora de `answers` também:** grafias de Portugal (`facto`, `ecrãs`), estrangeirismos não aportuguesados (`mouse`, `hobby`) e palavras corretas, mas raras (`bisel`, `melro`).
 
 Para vetar uma palavra, inclua-a em `ANSWER_ONLY_EXCLUSIONS` e gere de novo.

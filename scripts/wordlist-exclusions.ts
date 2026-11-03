@@ -28,6 +28,8 @@ export const ANSWER_ONLY_EXCLUSIONS: readonly string[] = [
   // Termos ofensivos, sexuais ou de uso delicado com outro sentido inocente.
   ...words(`bicha bunda cagar corno crack droga fezes gozar mijar pênis pinto pornô rabos seios
     sexos tesão trans trepa urina útero vadia veado viado`),
+  // Vetadas pelo autor na revisão da Fase 1.
+  ...words(`burro gorda macho matar morte negro preta`),
   // Conjugações sem outro uso comum, que CONJUGATED_ENDINGS não alcança.
   ...words(`abana abate acaba acabe acabo achas acusa agita ajude ajudo alega aluga andas anime
     anota anote apela apoia apoie ataca atira atire atiro atrai avise basta beija beije brigo
