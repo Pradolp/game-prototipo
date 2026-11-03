@@ -5,7 +5,7 @@
 - **Abas:** "Palavra do dia" (uma por dia, sem reset) e "CHUTE" (uma palavra por dia, mais **3 resets por dia** que a trocam, sempre depois que a palavra atual termina). Tudo renova à meia-noite (horário de Brasília).
 - **Modos:** só 1 palavra no MVP. Os modos com 2 e 4 palavras ficam no backlog.
 - **Dados:** localStorage, sem login e sem servidor.
-- **Nome:** ainda não definido; "Palavrinha" é provisório.
+- **Nome:** CHUTE, definitivo. O repositório no GitHub mantém o nome atual.
 - **Repositório:** continua público no GitHub (`Pradolp/game-prototipo`).
 - **Cores:** paleta Tokyo Night, igual à do terminal do autor; detalhes no `CLAUDE.md`.
 

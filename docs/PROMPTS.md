@@ -54,7 +54,7 @@ Tudo com datas e RNG injetáveis. Apague o src/game/example.test.ts. Pronto quan
 ## Fase 3: Interface
 ```
 Leia o CLAUDE.md. Use a skill frontend-design. Execute a Fase 3:
-- Use a paleta Tokyo Night exatamente como está na seção "Paleta" do CLAUDE.md, com os tokens em src/styles/, e não invente outra. A identidade visual continua PRÓPRIA (nome provisório "Palavrinha"), acolhedora e com fonte grande, sem copiar o layout de Termo/Wordle.
+- Use a paleta Tokyo Night exatamente como está na seção "Paleta" do CLAUDE.md, com os tokens em src/styles/, e não invente outra. A identidade visual continua PRÓPRIA (nome CHUTE, sempre em maiúsculas), acolhedora e com fonte grande, sem copiar o layout de Termo/Wordle.
 - Header: duas abas lado a lado no CANTO SUPERIOR ESQUERDO, "Palavra do dia" e "CHUTE", sempre abrindo em "Palavra do dia"; título no centro; ícones de Ajuda e Estatísticas. No CANTO SUPERIOR DIREITO, SÓ na aba CHUTE, o botão ↻ mostrando quantos resets restam (ex.: "↻ 3"). Com a palavra em andamento, ele fica desativado e, ao tocar, mostra "Termine esta palavra para trocar". Com a palavra terminada, fica ativo e troca direto, sem confirmação. Sem resets, fica desativado com "Novas palavras amanhã", inclusive com a palavra em andamento. Na aba Palavra do dia não há botão ↻.
 - Board 6x5 com animação de virar a letra (respeitando prefers-reduced-motion), teclado virtual em PT-BR com teclas >= 44px e cores por letra, e suporte ao teclado físico.
 - Toasts ("Palavra não encontrada", "Faltam letras"), modal de ajuda, modal de fim de jogo (mostra a palavra acentuada, as estatísticas e quanto falta para a próxima palavra do dia). A sequência exibida vem de `getCurrentStreak`, não do valor salvo.
@@ -64,7 +64,7 @@ Teste no navegador com Playwright em 360px e em desktop e me mande screenshots.
 
 ## Fase 4: Persistência
 ```
-Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas palavrinha:v1:* e try/catch. Persista a sessão do dia (partidas das duas abas e resets), as estatísticas e as preferências. A aba aberta não é salva: o jogo sempre abre em "Palavra do dia". Escreva testes E2E com Playwright:
+Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas chute:v1:* e try/catch. Persista a sessão do dia (partidas das duas abas e resets), as estatísticas e as preferências. A aba aberta não é salva: o jogo sempre abre em "Palavra do dia". Escreva testes E2E com Playwright:
 (1) jogar 2 chutes, recarregar e ver os chutes preservados;
 (2) na aba CHUTE, confirmar que o ↻ fica desativado com a palavra em andamento, terminar cada palavra, usar os 3 resets e confirmar que o botão fica desabilitado;
 (3) simular a virada do dia (relógio do Playwright) e ver os resets voltarem a 3 e a palavra do dia mudar;

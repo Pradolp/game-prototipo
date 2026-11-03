@@ -1,9 +1,11 @@
-# CLAUDE.md — Jogo de palavras (nome provisório: "Palavrinha")
+# CLAUDE.md — CHUTE, jogo de palavras
 
-Jogo web de adivinhar palavras em português, no estilo dos jogos de palavra do dia (5 letras, dicas por cores).
+**CHUTE** é um jogo web de adivinhar palavras em português, no estilo dos jogos de palavra do dia (5 letras, dicas por cores).
 Feito para uma jogadora principal (a mãe do autor), que gosta do gênero mas acha pouco ter só uma palavra por dia.
 A **diferença principal** é a aba **CHUTE**, ao lado da aba **Palavra do dia**: ela traz uma palavra a mais por dia e o botão **↻**, que a troca **até 3 vezes por dia**.
 
+> Na interface, o nome CHUTE é sempre escrito em maiúsculas.
+>
 > O jogo precisa ter **nome, visual e textos próprios**. Não copie nome, logo, cores exatas, layout ou textos de jogos existentes (Termo, Wordle etc.). A mecânica do gênero pode ser usada.
 
 ## Idioma
@@ -66,7 +68,7 @@ Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Pal
 - Conta apenas a **palavra do dia**. A aba CHUTE nunca altera a sequência.
 - Se a palavra do dia ficar sem jogar ou sem vencer no dia, a sequência zera. No dia seguinte a uma vitória, ela segue valendo até o fim do dia, enquanto a palavra do dia ainda pode ser vencida.
 
-### Persistência (localStorage, chave versionada `palavrinha:v1:*`)
+### Persistência (localStorage, chave versionada `chute:v1:*`)
 - Sessão do dia: data, partida do dia e partida de CHUTE (se houver). Cada partida guarda tipo (`daily` | `extra`), resposta, chutes e status. A aba aberta não é salva, porque o jogo sempre abre em "Palavra do dia".
 - Resets: `{ date, used, played }` (`played` guarda as palavras de CHUTE do dia, para não repetir).
 - Estatísticas: jogos, vitórias, sequência atual, melhor sequência, data da última vitória na palavra do dia, distribuição por número de tentativas.
