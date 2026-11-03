@@ -1,5 +1,5 @@
-Avisos de terceiros: listas de palavras do jogo
-================================================
+Avisos de terceiros: listas de palavras e fontes do jogo
+========================================================
 
 Código-fonte, listas geradas e o gerador:
 https://github.com/Pradolp/game-prototipo
@@ -40,3 +40,15 @@ Fonte: Tatoeba (https://tatoeba.org), colaboradores do projeto.
 Licença: Creative Commons Atribuição 2.0 França (CC BY 2.0 FR)
 https://creativecommons.org/licenses/by/2.0/fr/
 Alteração feita: as frases foram reduzidas a contagens de palavras de 5 letras.
+
+
+Fontes
+------
+Usadas na interface do jogo, sem modificação, pelos pacotes do Fontsource.
+Ambas sob a SIL Open Font License 1.1.
+
+Zilla Slab: Copyright 2017, The Mozilla Foundation.
+Licença: licenses/OFL-1.1-Zilla-Slab.txt
+
+Atkinson Hyperlegible Next: licença e copyright em
+licenses/OFL-1.1-Atkinson-Hyperlegible-Next.txt

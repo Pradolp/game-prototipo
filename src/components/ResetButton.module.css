@@ -1,0 +1,22 @@
+.reset {
+  justify-self: end;
+  align-self: center;
+  min-width: 3.4rem;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.7rem;
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-control);
+  background: var(--color-accent);
+  color: var(--color-on-bright);
+  font-weight: 700;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.reset[aria-disabled='true'] {
+  border-color: var(--color-surface);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}

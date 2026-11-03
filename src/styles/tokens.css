@@ -1,0 +1,28 @@
+/* Paleta Tokyo Night: valores no CLAUDE.md, seção "Paleta". */
+:root {
+  --color-bg: #1a1b26;
+  --color-text: #c0caf5;
+  --color-text-muted: #a9b1d6;
+  --color-surface: #414868;
+  --color-correct: #9ece6a;
+  --color-present: #e0af68;
+  --color-accent: #7aa2f7;
+  --color-danger: #f7768e;
+  --color-extra-1: #bb9af7;
+  --color-extra-2: #7dcfff;
+
+  /* Papéis derivados da paleta. */
+  --color-on-bright: var(--color-bg);
+  --color-on-surface: var(--color-text);
+  --color-panel: color-mix(in srgb, var(--color-surface) 22%, var(--color-bg));
+  --color-backdrop: color-mix(in srgb, var(--color-bg) 80%, transparent);
+
+  --font-ui: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --font-word: 'Zilla Slab', Georgia, serif;
+
+  --radius-tile: 0.4rem;
+  --radius-control: 0.55rem;
+  --radius-sheet: 0.85rem;
+  --tab-line: 3px;
+  --gutter: 0.5rem;
+}

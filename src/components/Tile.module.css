@@ -1,0 +1,99 @@
+.tile {
+  --tile-bg: transparent;
+  --tile-fg: var(--color-on-surface);
+  --tile-border: var(--color-surface);
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid var(--tile-border);
+  border-radius: var(--radius-tile);
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+  font-family: var(--font-word);
+  font-weight: 700;
+  font-size: calc(var(--tile-size, 2.5rem) * 0.62);
+  line-height: 1;
+  user-select: none;
+}
+
+.tile[data-active] {
+  --tile-border: var(--color-text-muted);
+}
+
+.tile[data-result='absent'] {
+  --tile-bg: var(--color-surface);
+  --tile-border: var(--color-surface);
+}
+
+.tile[data-result='correct'] {
+  --tile-bg: var(--color-correct);
+  --tile-fg: var(--color-on-bright);
+  --tile-border: var(--color-correct);
+}
+
+.tile[data-result='present'] {
+  --tile-bg: var(--color-present);
+  --tile-fg: var(--color-on-bright);
+  --tile-border: var(--color-present);
+}
+
+/* Marca não colorida: verde e amarelo têm quase a mesma luminosidade. */
+.tile[data-result='present']::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border: 2px dashed var(--color-on-bright);
+  border-radius: calc(var(--radius-tile) * 0.6);
+  pointer-events: none;
+}
+
+.tile[data-flip] {
+  animation: flip var(--flip-ms) ease-in-out var(--flip-delay) backwards;
+}
+
+.tile[data-flip]::after {
+  animation: mark var(--flip-ms) linear var(--flip-delay) backwards;
+}
+
+/* A cor troca no meio do giro, quando a casa está de lado. */
+@keyframes flip {
+  0%,
+  49.9% {
+    background: transparent;
+    color: var(--color-on-surface);
+    border-color: var(--color-text-muted);
+  }
+  0% {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(90deg);
+    background: var(--tile-bg);
+    color: var(--tile-fg);
+    border-color: var(--tile-border);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes mark {
+  0%,
+  49.9% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile[data-flip],
+  .tile[data-flip]::after {
+    animation: none;
+  }
+}

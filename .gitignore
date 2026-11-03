@@ -38,3 +38,7 @@ npm-debug.log*
 
 # Dados baixados (não confiáveis) do gerador de listas
 .wordlist-cache/
+
+# Screenshots e dados do Playwright MCP
+screenshots/
+.playwright-mcp/

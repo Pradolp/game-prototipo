@@ -1,0 +1,37 @@
+.title {
+  margin: 0;
+  font-family: var(--font-word);
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0 0 -0.75rem;
+  font-size: 1.05rem;
+}
+
+.text {
+  margin: 0;
+  max-width: 60ch;
+}
+
+.legend {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.example {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.example dd {
+  margin: 0;
+}
+
+.tile {
+  --tile-size: 2.6rem;
+}

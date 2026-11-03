@@ -1,0 +1,62 @@
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(44px, 1fr));
+  grid-auto-rows: clamp(46px, 7.2dvh, 3.5rem);
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.key {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-weight: 700;
+  font-size: 1.15rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:active {
+  transform: translateY(1px);
+}
+
+/* Tecla sem resultado usa a superfície; a descartada recua e ganha um risco. */
+.key[data-result='absent'] {
+  border-color: var(--color-surface);
+  background: transparent;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.key[data-result='correct'] {
+  background: var(--color-correct);
+  color: var(--color-on-bright);
+}
+
+.key[data-result='present'] {
+  background: var(--color-present);
+  color: var(--color-on-bright);
+}
+
+.key[data-result='present']::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 2px dashed var(--color-on-bright);
+  border-radius: 0.3rem;
+  pointer-events: none;
+}
+
+.submit {
+  background: var(--color-accent);
+  color: var(--color-on-bright);
+}

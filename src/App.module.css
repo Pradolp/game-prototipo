@@ -1,0 +1,41 @@
+.app {
+  --tab-color: var(--color-accent);
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(100%, 68rem);
+  height: 100dvh;
+  min-height: 34rem;
+  margin-inline: auto;
+}
+
+.app[data-game='extra'] {
+  --tab-color: var(--color-extra-1);
+}
+
+.panel {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  min-height: 0;
+  padding: 0.5rem var(--gutter) 0.6rem;
+  background: var(--color-panel);
+}
+
+/* Em tela larga, a ficha ganha margens e o teclado fica ao lado do tabuleiro. */
+@media (min-width: 40rem) and (min-aspect-ratio: 1/1) {
+  .app {
+    min-height: 20rem;
+    padding: 1rem clamp(1rem, 3vw, 2rem);
+  }
+
+  .panel {
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    align-items: center;
+    gap: clamp(1rem, 4vw, 3rem);
+    padding: clamp(0.75rem, 3vh, 1.75rem) clamp(1rem, 3vw, 2.5rem);
+    border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
+  }
+}

@@ -30,6 +30,18 @@ export const remainingResets = (state: ResetState, today: string): number =>
 export const canReset = (state: ResetState, today: string, status: GameStatus): boolean =>
   status !== 'playing' && remainingResets(state, today) > 0
 
+/** Situação do botão de reset. Sem resets, `exhausted` vale até com a partida em andamento. */
+export type ResetAvailability = 'ready' | 'locked' | 'exhausted'
+
+export function resetAvailability(
+  state: ResetState,
+  today: string,
+  status: GameStatus,
+): ResetAvailability {
+  if (remainingResets(state, today) === 0) return 'exhausted'
+  return canReset(state, today, status) ? 'ready' : 'locked'
+}
+
 /** Sorteia fora a palavra do dia e as já jogadas; `undefined` se não sobrar nenhuma. */
 function drawWord(current: ResetState, rng: Rng, words: readonly string[]): string | undefined {
   const excluded = new Set([getDailyWord(current.date, words), ...current.played])

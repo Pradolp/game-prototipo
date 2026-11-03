@@ -1,0 +1,34 @@
+.modal {
+  width: min(30rem, calc(100vw - 1.5rem));
+  max-height: calc(100dvh - 1.5rem);
+  padding: 0;
+  border: var(--tab-line) solid var(--tab-color, var(--color-accent));
+  border-radius: var(--radius-sheet);
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+.modal:focus {
+  outline: none;
+}
+
+.modal::backdrop {
+  background: var(--color-backdrop);
+}
+
+.content {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem 1.1rem 1rem;
+}
+
+.close {
+  justify-self: stretch;
+  min-height: 3rem;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-accent);
+  color: var(--color-on-bright);
+  font-weight: 700;
+  cursor: pointer;
+}

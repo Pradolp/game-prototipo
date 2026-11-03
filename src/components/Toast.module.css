@@ -1,0 +1,33 @@
+.region {
+  position: absolute;
+  inset: 0.6rem 0 auto;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  padding-inline: 1rem;
+  pointer-events: none;
+}
+
+.toast {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-control);
+  background: var(--color-text);
+  color: var(--color-on-bright);
+  font-weight: 700;
+  text-align: center;
+  animation: pop 0.14s ease-out;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

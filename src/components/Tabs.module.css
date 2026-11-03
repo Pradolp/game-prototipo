@@ -1,0 +1,28 @@
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.15rem;
+  /* A aba ativa encosta na linha do painel e a apaga, como a orelha de uma ficha. */
+  margin-bottom: calc(-1 * var(--tab-line));
+}
+
+.tab {
+  min-height: 2.75rem;
+  padding: 0.35rem 0.7rem;
+  border: var(--tab-line) solid transparent;
+  border-bottom: 0;
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  border-color: var(--tab-color);
+  background: var(--color-panel);
+  color: var(--color-text);
+  font-weight: 700;
+  padding-bottom: calc(0.35rem + var(--tab-line));
+}

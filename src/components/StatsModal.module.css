@@ -1,0 +1,99 @@
+.title {
+  margin: 0;
+  font-family: var(--font-word);
+  font-size: 1.8rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.answer {
+  display: grid;
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.word {
+  font-family: var(--font-word);
+  font-size: 2.6rem;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.figure {
+  display: grid;
+  align-content: start;
+}
+
+.figure dd {
+  margin: 0;
+  font-family: var(--font-word);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.figure dt {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.bars {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 1rem 1fr 1.6rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.track {
+  display: block;
+  height: 0.9rem;
+  border-radius: 0.25rem;
+  background: var(--color-bg);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 0.25rem;
+  background: var(--color-text-muted);
+}
+
+.bar[data-current] .fill {
+  background: var(--tab-color);
+}
+
+.count {
+  text-align: end;
+}
+
+.countdown {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.time {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}

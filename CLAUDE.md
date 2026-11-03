@@ -20,6 +20,7 @@ A **diferença principal** é a aba **CHUTE**, ao lado da aba **Palavra do dia**
 | Build/dev server | **Vite** | Rápido e simples |
 | UI | **React 19 + TypeScript 6.0 (strict)** | Componentes simples, fácil de virar app mobile depois (React Native/Capacitor). TS fixado em `~6.0.3` porque o `typescript-eslint` exige `<6.1`; suba quando ele aceitar o 7 |
 | Estilo | **CSS Modules + variáveis CSS** | Sem dependência extra; o tema Tokyo Night (padrão) e o modo daltônico usam variáveis |
+| Fontes | **Zilla Slab** (casas e títulos) e **Atkinson Hyperlegible Next** (interface), via `@fontsource`, sob a OFL | Servidas pelo próprio jogo, sem depender de CDN; avisos em `public/THIRD_PARTY_NOTICES.txt` |
 | Estado | `useReducer` + hooks próprios | O jogo é pequeno, não precisa de Redux/Zustand |
 | Persistência | **localStorage** (sem backend, sem login) | Tudo fica no aparelho |
 | Testes unitários | **Vitest + Testing Library** | Lógica do jogo 100% testada |
@@ -46,7 +47,7 @@ npm run build:wordlist   # regenera src/data/ (veja docs/WORDLIST.md)
 - **Letras repetidas:** use o algoritmo de duas passadas. Primeiro marque as letras no lugar certo, depois as letras em lugar errado, descontando o que sobrou de cada letra na resposta. Isso precisa ter testes específicos (ex.: resposta `CASAL`, chute `AAAAA`).
 - **Acentos e Ç:** a jogadora digita sem acento. A comparação é feita com a palavra **normalizada** (sem acento, `ç`→`c`), e a exibição mostra a forma acentuada (`MAÇÃS`, `LÁPIS`) quando a palavra é revelada ou acertada.
 - **Validação:** o chute precisa estar na lista de palavras válidas; se não estiver, mostre uma mensagem e não gaste a tentativa.
-- **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico.
+- **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico. É uma grade **alfabética de 7 colunas**: um QWERTY de 10 colunas não cabe em 360px com teclas de 44×44px.
 
 ### Abas: Palavra do dia e CHUTE
 Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Palavra do dia", e trocar de aba não muda nenhum progresso.
