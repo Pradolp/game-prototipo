@@ -42,3 +42,6 @@ npm-debug.log*
 # Screenshots e dados do Playwright MCP
 screenshots/
 .playwright-mcp/
+
+# Vínculo local com a Vercel
+.vercel/
