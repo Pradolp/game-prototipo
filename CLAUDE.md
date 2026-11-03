@@ -47,7 +47,14 @@ npm run build:wordlist   # regenera src/data/ (veja docs/WORDLIST.md)
 - **Letras repetidas:** use o algoritmo de duas passadas. Primeiro marque as letras no lugar certo, depois as letras em lugar errado, descontando o que sobrou de cada letra na resposta. Isso precisa ter testes específicos (ex.: resposta `CASAL`, chute `AAAAA`).
 - **Acentos e Ç:** a jogadora digita sem acento. A comparação é feita com a palavra **normalizada** (sem acento, `ç`→`c`), e a exibição mostra a forma acentuada (`MAÇÃS`, `LÁPIS`) quando a palavra é revelada ou acertada.
 - **Validação:** o chute precisa estar na lista de palavras válidas; se não estiver, mostre uma mensagem e não gaste a tentativa.
-- **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico. É uma grade **alfabética de 7 colunas**: um QWERTY de 10 colunas não cabe em 360px com teclas de 44×44px.
+- **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico. Usa o layout **QWERTY**, igual ao do celular, porque é o que a jogadora já conhece: `Q W E R T Y U I O P` / `A S D F G H J K L` (centralizada) / `OK Z X C V B N M ⌫`, com `OK` e `⌫` ocupando cerca de 1,5 tecla.
+- **Casas selecionáveis:** a jogadora escolhe qualquer casa da linha atual e preenche em qualquer ordem.
+  - Tocar em uma casa a seleciona, vazia ou preenchida, sem apagar nada. Linhas anteriores e futuras não respondem. Com a partida terminada ou um modal aberto, nada é selecionável. Cada linha começa na 1ª casa.
+  - **Digitar** escreve na casa selecionada, substituindo a letra que houver. Depois, a seleção vai para a próxima casa vazia à direita; se não houver, para a primeira vazia a partir da esquerda; com a linha cheia, fica na mesma casa.
+  - **Apagar (⌫ e Backspace):** na casa com letra, apaga e continua nela. Na casa vazia, volta uma casa à esquerda e apaga a letra dela. Na 1ª casa vazia, não faz nada.
+  - **Setas ← e →** movem a seleção uma casa, sem dar a volta nas pontas.
+  - **Enviar** com qualquer casa vazia mostra "Faltam letras" e não gasta tentativa. Palavra fora da lista mantém as letras e a seleção. Chute aceito leva à próxima linha, com seleção na 1ª casa.
+  - Trocar de aba preserva as letras e a casa selecionada de cada aba.
 
 ### Abas: Palavra do dia e CHUTE
 Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Palavra do dia", e trocar de aba não muda nenhum progresso.
@@ -58,6 +65,7 @@ Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Pal
   - O botão mostra quantos restam (ex.: "↻ 2").
   - O reset só fica disponível **depois que a palavra atual termina**: a jogadora acertou ou usou as 6 tentativas. Com a partida em andamento, é proibido trocar de palavra.
   - Estados do ↻: em andamento, fica desativado e, ao tocar, mostra "Termine esta palavra para trocar"; terminada, fica ativo e troca direto, sem confirmação; sem resets, fica desativado com "Novas palavras amanhã". Sem resets, esta última mensagem vale também com a partida em andamento.
+  - Na janela de resultado desta aba, com resets restantes, o botão "Próxima palavra" faz o mesmo que o ↻ e fecha a janela. Sem resets, ele não aparece.
   - O reset troca a palavra e não repete a do dia nem as já jogadas hoje.
   - Palavra terminada conta em jogos, vitórias e distribuição de tentativas, nunca na sequência.
   - Na virada do dia, a palavra em andamento é descartada.
@@ -70,7 +78,7 @@ Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Pal
 - Se a palavra do dia ficar sem jogar ou sem vencer no dia, a sequência zera. No dia seguinte a uma vitória, ela segue valendo até o fim do dia, enquanto a palavra do dia ainda pode ser vencida.
 
 ### Persistência (localStorage, chave versionada `chute:v1:*`)
-- Sessão do dia: data, partida do dia e partida de CHUTE (se houver). Cada partida guarda tipo (`daily` | `extra`), resposta, chutes e status. A aba aberta não é salva, porque o jogo sempre abre em "Palavra do dia".
+- Sessão do dia: data, partida do dia e partida de CHUTE (se houver). Cada partida guarda tipo (`daily` | `extra`), resposta, chutes, status, `slots` e `cursor`. A aba aberta não é salva, porque o jogo sempre abre em "Palavra do dia".
 - Resets: `{ date, used, played }` (`played` guarda as palavras de CHUTE do dia, para não repetir).
 - Estatísticas: jogos, vitórias, sequência atual, melhor sequência, data da última vitória na palavra do dia, distribuição por número de tentativas.
 - Preferências: modo daltônico, tamanho da fonte.
@@ -99,7 +107,8 @@ Regras de uso (contraste medido em WCAG):
 
 ## Acessibilidade (a jogadora é a prioridade)
 - Fonte grande e legível; tamanho ajustável nas preferências.
-- Teclas do teclado virtual com **pelo menos 44×44px**.
+- Casas, botões e demais alvos de toque com **pelo menos 44×44px**.
+- **Exceção:** a largura das teclas de letra do teclado virtual. Em 360px, as 10 colunas do QWERTY dão cerca de 31px por tecla. O autor preferiu o layout conhecido pela jogadora, e em troca a tecla tem pelo menos 52px de altura, usa toda a largura da tela e cresce em telas maiores. `OK` e `⌫` continuam com 44px ou mais.
 - Contraste AA no mínimo; modo daltônico.
 - Nada depende só da cor: o resultado de cada letra também vai em `aria-label`.
 - Animações curtas e respeito a `prefers-reduced-motion`.

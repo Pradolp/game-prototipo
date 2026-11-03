@@ -7,8 +7,9 @@ export interface TileView {
   /** Letra pronta para exibir, em maiúscula; vazia em casa sem letra. */
   letter: string
   result: LetterResult | null
-  /** Casa da linha em digitação: já preenchida ou a próxima a preencher. */
+  /** Casa da linha atual, que a jogadora pode selecionar. */
   active: boolean
+  selected: boolean
 }
 
 const LOCALE = 'pt-BR'
@@ -20,28 +21,36 @@ function shownLetters(guess: string, answer: string): string[] {
   return [...displayWord(guess === normalize(answer) ? answer : guess)]
 }
 
-function typingRow(current: string, playing: boolean): TileView[] {
-  const letters = [...displayWord(current)]
-  return Array.from({ length: WORD_LENGTH }, (_, index) => ({
-    letter: letters[index] ?? '',
+const blankRow = (): TileView[] =>
+  Array.from({ length: WORD_LENGTH }, () => ({
+    letter: '',
     result: null,
-    active: playing && index <= letters.length,
+    active: false,
+    selected: false,
   }))
-}
 
-export function boardRows({ guesses, current, answer, status }: GameState): TileView[][] {
+const typingRow = (slots: readonly string[], cursor: number): TileView[] =>
+  slots.map((slot, index) => ({
+    letter: displayWord(slot),
+    result: null,
+    active: true,
+    selected: index === cursor,
+  }))
+
+export function boardRows({ guesses, slots, cursor, answer, status }: GameState): TileView[][] {
   const sent = guesses.map((guess) => {
     const letters = shownLetters(guess, answer)
     return evaluateGuess(guess, answer).map((result, index): TileView => ({
       letter: letters[index] ?? '',
       result,
       active: false,
+      selected: false,
     }))
   })
-  const blank = Array.from({ length: MAX_ATTEMPTS - sent.length }, (_, index) =>
-    typingRow(index === 0 ? current : '', index === 0 && status === 'playing'),
+  const rest = Array.from({ length: MAX_ATTEMPTS - sent.length }, (_, index) =>
+    index === 0 && status === 'playing' ? typingRow(slots, cursor) : blankRow(),
   )
-  return [...sent, ...blank]
+  return [...sent, ...rest]
 }
 
 const RANK: Record<LetterResult, number> = { absent: 0, present: 1, correct: 2 }

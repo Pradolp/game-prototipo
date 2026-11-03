@@ -44,6 +44,7 @@ function App({ now = systemNow, rng = Math.random }: AppProps) {
           typingRow={game.guesses.length}
           revealRow={ui.revealRow}
           notice={ui.notice}
+          onSelectSlot={(index) => ui.play({ type: 'selectSlot', index })}
         />
         <Keyboard letters={ui.letters} onAction={ui.play} />
       </main>
@@ -51,6 +52,7 @@ function App({ now = systemNow, rng = Math.random }: AppProps) {
       {ui.modal === 'stats' && (
         <StatsModal
           game={game}
+          onNextWord={ui.availability === 'ready' ? ui.pressReset : undefined}
           stats={ui.stats}
           streak={ui.streak}
           now={now}

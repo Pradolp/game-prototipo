@@ -19,23 +19,23 @@
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 0.6rem;
   min-height: 0;
-  padding: 0.5rem var(--gutter) 0.6rem;
+  padding: 0.4rem 3px 0.5rem;
   background: var(--color-panel);
 }
 
 /* Em tela larga, a ficha ganha margens e o teclado fica ao lado do tabuleiro. */
-@media (min-width: 40rem) and (min-aspect-ratio: 1/1) {
+@media (min-width: 30rem) and (min-aspect-ratio: 5/4) {
   .app {
-    min-height: 20rem;
-    padding: 1rem clamp(1rem, 3vw, 2rem);
+    min-height: 0;
+    padding: clamp(0rem, 6vh - 1.25rem, 1rem) clamp(0.5rem, 3vw, 2rem);
   }
 
   .panel {
     grid-template-rows: minmax(0, 1fr);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    grid-template-columns: minmax(15rem, 1fr) minmax(0, 30rem);
     align-items: center;
-    gap: clamp(1rem, 4vw, 3rem);
-    padding: clamp(0.75rem, 3vh, 1.75rem) clamp(1rem, 3vw, 2.5rem);
+    gap: clamp(0.5rem, 3vw, 3rem);
+    padding: clamp(0.25rem, 6vh - 1.25rem, 1.75rem) clamp(0.5rem, 3vw, 2.5rem);
     border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
   }
 }

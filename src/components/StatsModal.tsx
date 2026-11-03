@@ -13,6 +13,8 @@ interface StatsModalProps {
   streak: number
   now: () => Date
   onClose: () => void
+  /** Presente quando o ↻ pode trocar a palavra. */
+  onNextWord?: () => void
 }
 
 const TITLE: Record<GameState['status'], string> = {
@@ -30,8 +32,9 @@ function Countdown({ now }: { now: () => Date }) {
   )
 }
 
-export function StatsModal({ game, stats, streak, now, onClose }: StatsModalProps) {
+export function StatsModal({ game, stats, streak, now, onClose, onNextWord }: StatsModalProps) {
   const finished = game.status !== 'playing'
+  const showNext = game.type === 'extra' && onNextWord !== undefined
   const figures = [
     { label: 'Jogos', value: stats.played },
     { label: 'Vitórias', value: stats.won },
@@ -42,7 +45,11 @@ export function StatsModal({ game, stats, streak, now, onClose }: StatsModalProp
   const lastAttempts = game.status === 'won' ? game.guesses.length : null
 
   return (
-    <Modal labelId={LABEL_ID} onClose={onClose}>
+    <Modal
+      labelId={LABEL_ID}
+      onClose={onClose}
+      action={showNext ? { label: 'Próxima palavra', onClick: onNextWord } : undefined}
+    >
       <h2 id={LABEL_ID} className={styles.title}>
         {TITLE[game.status]}
       </h2>

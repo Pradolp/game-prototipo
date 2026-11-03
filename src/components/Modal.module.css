@@ -22,7 +22,7 @@
   padding: 1.1rem 1.1rem 1rem;
 }
 
-.close {
+.button {
   justify-self: stretch;
   min-height: 3rem;
   border: 0;
@@ -31,4 +31,11 @@
   color: var(--color-on-bright);
   font-weight: 700;
   cursor: pointer;
+}
+
+.button[data-secondary] {
+  margin-top: -0.5rem;
+  border: 2px solid var(--color-surface);
+  background: none;
+  color: var(--color-text);
 }

@@ -7,9 +7,10 @@ interface RowProps {
   number: number
   flipping: boolean
   shaking: boolean
+  onSelectSlot: (index: number) => void
 }
 
-export function Row({ tiles, number, flipping, shaking }: RowProps) {
+export function Row({ tiles, number, flipping, shaking, onSelectSlot }: RowProps) {
   return (
     <div
       className={styles.row}
@@ -18,7 +19,12 @@ export function Row({ tiles, number, flipping, shaking }: RowProps) {
       data-shake={shaking || undefined}
     >
       {tiles.map((tile, index) => (
-        <Tile key={index} {...tile} flipIndex={flipping ? index : undefined} />
+        <Tile
+          key={index}
+          {...tile}
+          flipIndex={flipping ? index : undefined}
+          slot={tile.active ? { index, onSelect: () => onSelectSlot(index) } : undefined}
+        />
       ))}
     </div>
   )

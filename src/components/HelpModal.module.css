@@ -15,6 +15,10 @@
   max-width: 60ch;
 }
 
+.link {
+  color: var(--color-accent);
+}
+
 .legend {
   display: grid;
   gap: 0.6rem;

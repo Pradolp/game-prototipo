@@ -8,12 +8,13 @@ interface BoardProps {
   typingRow: number
   revealRow: number | null
   notice: Notice | null
+  onSelectSlot: (index: number) => void
 }
 
 const rejectsGuess = (notice: Notice | null): boolean =>
   notice?.kind === 'tooShort' || notice?.kind === 'notInList'
 
-export function Board({ rows, typingRow, revealRow, notice }: BoardProps) {
+export function Board({ rows, typingRow, revealRow, notice, onSelectSlot }: BoardProps) {
   const shaking = rejectsGuess(notice)
   return (
     <div className={styles.area}>
@@ -28,6 +29,7 @@ export function Board({ rows, typingRow, revealRow, notice }: BoardProps) {
               number={index + 1}
               flipping={index === revealRow}
               shaking={shakes}
+              onSelectSlot={onSelectSlot}
             />
           )
         })}

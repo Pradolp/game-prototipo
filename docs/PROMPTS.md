@@ -64,7 +64,7 @@ Teste no navegador com Playwright em 360px e em desktop e me mande screenshots.
 
 ## Fase 4: Persistência
 ```
-Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas chute:v1:* e try/catch. Persista a sessão do dia (partidas das duas abas e resets), as estatísticas e as preferências. A aba aberta não é salva: o jogo sempre abre em "Palavra do dia". Ao voltar para uma aba do navegador que ficou aberta (`visibilitychange`, `focus`) e também antes de cada ação, confira `todayKey` e, se o dia mudou, inicie a sessão do novo dia. Escreva testes E2E com Playwright:
+Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas chute:v1:* e try/catch. Persista a sessão do dia (partidas das duas abas, incluindo `slots` e `cursor` da linha atual, e resets), as estatísticas e as preferências. A aba aberta não é salva: o jogo sempre abre em "Palavra do dia". Ao voltar para uma aba do navegador que ficou aberta (`visibilitychange`, `focus`) e também antes de cada ação, confira `todayKey` e, se o dia mudou, inicie a sessão do novo dia. Escreva testes E2E com Playwright:
 (1) jogar 2 chutes, recarregar e ver os chutes preservados;
 (2) na aba CHUTE, confirmar que o ↻ fica desativado com a palavra em andamento, terminar cada palavra, usar os 3 resets e confirmar que o botão fica desabilitado;
 (3) simular a virada do dia (relógio do Playwright) e ver os resets voltarem a 3 e a palavra do dia mudar;
@@ -75,7 +75,7 @@ Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas chut
 
 ## Fase 5: Acessibilidade e polimento
 ```
-Leia o CLAUDE.md. Execute a Fase 5: adicione o modo daltônico (conforme a seção "Paleta" do CLAUDE.md) e o ajuste de tamanho de fonte; aria-labels em cada letra com o resultado ("letra A, posição certa"); foco visível e navegação por teclado nos modais. Rode uma auditoria (axe via Playwright) e corrija tudo o que for sério ou crítico. Depois rode /code-review e corrija os achados.
+Leia o CLAUDE.md. Execute a Fase 5: adicione o modo daltônico (conforme a seção "Paleta" do CLAUDE.md) e o ajuste de tamanho de fonte; aria-labels em cada letra com o resultado ("letra A, posição certa"); foco visível e navegação por teclado nos modais e nas casas da linha atual; anúncio da casa selecionada para leitores de tela. Rode uma auditoria (axe via Playwright) e corrija tudo o que for sério ou crítico. Depois rode /code-review e corrija os achados.
 ```
 
 ## Fase 6: Deploy

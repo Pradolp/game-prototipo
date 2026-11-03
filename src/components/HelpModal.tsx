@@ -34,7 +34,9 @@ export function HelpModal({ onClose }: { onClose: () => void }) {
           <dd>A letra não está na palavra.</dd>
         </div>
       </dl>
-      <p className={styles.text}>Não precisa digitar acentos nem cedilha.</p>
+      <p className={styles.text}>
+        Toque em uma casa para escolher onde escrever. Não precisa digitar acentos nem cedilha.
+      </p>
       <h3 className={styles.subtitle}>Palavra do dia</h3>
       <p className={styles.text}>
         Uma palavra nova à meia-noite. É a única que conta para a sequência de dias.
@@ -44,6 +46,14 @@ export function HelpModal({ onClose }: { onClose: () => void }) {
         Uma palavra a mais por dia. Quando terminar, toque em ↻ para jogar outra, até 3 vezes por
         dia.
       </p>
+      <a
+        className={styles.link}
+        href={`${import.meta.env.BASE_URL}THIRD_PARTY_NOTICES.txt`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Créditos e licenças
+      </a>
     </Modal>
   )
 }

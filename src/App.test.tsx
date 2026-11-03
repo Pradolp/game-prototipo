@@ -23,6 +23,9 @@ const setup = () => {
 const guess = (user: ReturnType<typeof userEvent.setup>, word: string) =>
   user.keyboard(`${word}{Enter}`)
 const row = (number: number) => screen.getByRole('group', { name: `Tentativa ${number}` })
+const slot = (number: number) =>
+  within(row(1)).getByRole('button', { name: new RegExp(`^casa ${number} de 5`) })
+const slots = (number: number) => within(row(number)).getAllByRole('button')
 const tab = (name: string) => screen.getByRole('tab', { name })
 const resetButton = () => screen.getByRole('button', { name: /trocar|Novas palavras/i })
 
@@ -42,7 +45,7 @@ describe('App', () => {
   it('digita pelo teclado físico e apaga', async () => {
     const user = setup()
     await user.keyboard('caç{Backspace}')
-    const tiles = within(row(1)).getAllByRole('img')
+    const tiles = slots(1)
     expect(tiles[0]).toHaveTextContent('C')
     expect(tiles[1]).toHaveTextContent('A')
     expect(tiles[2]).toHaveTextContent('')
@@ -74,7 +77,7 @@ describe('App', () => {
   it('ignora atalhos com Ctrl', async () => {
     const user = setup()
     await user.keyboard('{Control>}r{/Control}')
-    expect(within(row(1)).getAllByRole('img')[0]).toHaveTextContent('')
+    expect(slots(1)[0]).toHaveTextContent('')
   })
 
   it('avisa quando faltam letras e quando a palavra não existe, sem gastar tentativa', async () => {
@@ -84,7 +87,7 @@ describe('App', () => {
     await user.keyboard('{Backspace}{Backspace}')
     await guess(user, 'xxxxx')
     expect(screen.getByRole('status')).toHaveTextContent('Palavra não encontrada')
-    expect(within(row(1)).getAllByRole('img')[0]).toHaveAttribute('aria-label', 'letra X')
+    expect(slots(1)[0]).toHaveTextContent('X')
   })
 
   it('colore as teclas com o resultado', async () => {
@@ -119,7 +122,7 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: 'Ajuda' }))
     await user.keyboard('a')
     await user.click(screen.getByRole('button', { name: 'Fechar' }))
-    expect(within(row(1)).getAllByRole('img')[0]).toHaveTextContent('')
+    expect(slots(1)[0]).toHaveTextContent('')
   })
 
   it('mostra CHUTE na ajuda e as estatísticas sem partida terminada', async () => {
@@ -138,9 +141,125 @@ describe('App', () => {
     const user = setup()
     await guess(user, WRONG[0] ?? '')
     await user.click(tab('CHUTE'))
-    expect(within(row(1)).getAllByRole('img')[0]).toHaveAttribute('aria-label', 'vazia')
+    expect(slots(1)[0]).toHaveTextContent('')
     await user.click(tab('Palavra do dia'))
     expect(within(row(1)).getAllByRole('img')[0]).toHaveTextContent('A')
+  })
+
+  it('seleciona uma casa com o toque e escreve nela', async () => {
+    const user = setup()
+    expect(slot(1)).toHaveAttribute('aria-pressed', 'true')
+    await user.click(slot(5))
+    expect(slot(5)).toHaveAccessibleName('casa 5 de 5, vazia, selecionada')
+    expect(slot(5)).not.toHaveFocus()
+    await user.keyboard('a')
+    expect(slot(5)).toHaveAccessibleName('casa 5 de 5, letra A')
+    expect(slot(1)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('envia pelo Enter físico depois de tocar em uma casa', async () => {
+    const user = setup()
+    await user.keyboard(WRONG[0] ?? '')
+    await user.click(slot(2))
+    await user.keyboard('{Enter}')
+    expect(within(row(1)).getAllByRole('img')[0]).toHaveAttribute(
+      'aria-label',
+      expect.stringMatching(/^letra A, /),
+    )
+  })
+
+  it('só a linha atual responde ao toque', async () => {
+    const user = setup()
+    expect(within(row(2)).queryAllByRole('button')).toHaveLength(0)
+    await guess(user, WRONG[0] ?? '')
+    expect(within(row(1)).queryAllByRole('button')).toHaveLength(0)
+    expect(slots(2)).toHaveLength(5)
+  })
+
+  it('nada é selecionável com a partida terminada', async () => {
+    const user = setup()
+    await guess(user, DAILY)
+    await screen.findByRole('dialog')
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+    expect(screen.queryByRole('button', { name: /^casa / })).not.toBeInTheDocument()
+  })
+
+  it('move a seleção pelas setas do teclado físico', async () => {
+    const user = setup()
+    await user.keyboard('{ArrowRight}{ArrowRight}{ArrowLeft}')
+    expect(slot(2)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('preserva letras e casa selecionada de cada aba', async () => {
+    const user = setup()
+    await user.click(slot(4))
+    await user.keyboard('b')
+    await user.click(slot(3))
+    await user.click(tab('CHUTE'))
+    expect(slot(1)).toHaveAttribute('aria-pressed', 'true')
+    await user.click(tab('Palavra do dia'))
+    expect(slot(4)).toHaveTextContent('B')
+    expect(slot(3)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('não move a seleção com as setas em uma aba focada', async () => {
+    const user = setup()
+    tab('Palavra do dia').focus()
+    await user.keyboard('{ArrowRight}')
+    await user.click(tab('Palavra do dia'))
+    expect(slot(1)).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('a ajuda explica a seleção e liga para os créditos', async () => {
+    const user = setup()
+    await user.click(screen.getByRole('button', { name: 'Ajuda' }))
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toHaveTextContent('Toque em uma casa para escolher onde escrever.')
+    expect(within(dialog).getByRole('link', { name: 'Créditos e licenças' })).toHaveAttribute(
+      'href',
+      '/THIRD_PARTY_NOTICES.txt',
+    )
+  })
+
+  it('não mostra Próxima palavra na Palavra do dia', async () => {
+    const user = setup()
+    await guess(user, DAILY)
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).queryByRole('button', { name: 'Próxima palavra' })).toBeNull()
+  })
+
+  it('Próxima palavra troca a palavra, gasta um reset e fecha a janela', async () => {
+    const user = setup()
+    await user.click(tab('CHUTE'))
+    await guess(user, normalize(FIRST_EXTRA.word))
+    const dialog = await screen.findByRole('dialog')
+    await user.click(within(dialog).getByRole('button', { name: 'Próxima palavra' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(resetButton()).toHaveTextContent('↻ 2')
+    expect(resetButton()).toHaveAttribute('aria-disabled', 'true')
+    expect(slots(1)[0]).toHaveTextContent('')
+  })
+
+  it('não mostra Próxima palavra com a partida em andamento nem sem resets', async () => {
+    const user = setup()
+    await user.click(tab('CHUTE'))
+    await user.click(screen.getByRole('button', { name: 'Estatísticas' }))
+    expect(screen.queryByRole('button', { name: 'Próxima palavra' })).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+
+    let state = FIRST_EXTRA
+    await guess(user, normalize(state.word))
+    for (let round = 0; round < 3; round += 1) {
+      const dialog = await screen.findByRole('dialog')
+      await user.click(within(dialog).getByRole('button', { name: 'Próxima palavra' }))
+      const next = applyReset(state.state, TODAY, 'won', () => 0)
+      if (next === null) throw new Error('reset recusado')
+      state = next
+      await guess(user, normalize(state.word))
+    }
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).toHaveTextContent('Você acertou!')
+    expect(within(dialog).queryByRole('button', { name: 'Próxima palavra' })).toBeNull()
   })
 
   it('troca de aba pelas setas', async () => {

@@ -8,12 +8,13 @@ const game = (fields: Partial<GameState>): GameState => ({
 })
 
 describe('boardRows', () => {
-  it('monta 6 linhas de 5 casas vazias no início, com a primeira casa ativa', () => {
+  it('monta 6 linhas de 5 casas, com a linha atual ativa e a 1ª casa selecionada', () => {
     const rows = boardRows(game({}))
     expect(rows).toHaveLength(6)
     expect(rows.every((row) => row.length === 5)).toBe(true)
-    expect(rows[0]?.map((tile) => tile.active)).toEqual([true, false, false, false, false])
-    expect(rows[1]?.some((tile) => tile.active)).toBe(false)
+    expect(rows[0]?.every((tile) => tile.active)).toBe(true)
+    expect(rows[0]?.map((tile) => tile.selected)).toEqual([true, false, false, false, false])
+    expect(rows[1]?.some((tile) => tile.active || tile.selected)).toBe(false)
   })
 
   it('mostra o chute enviado com resultado e sem acento', () => {
@@ -28,11 +29,12 @@ describe('boardRows', () => {
     ])
   })
 
-  it('marca como ativas as casas digitadas e a próxima', () => {
-    const rows = boardRows(game({ guesses: ['salas'], current: 'ca' }))
-    expect(rows[1]?.map((tile) => tile.letter).join('')).toBe('CA')
-    expect(rows[1]?.map((tile) => tile.active)).toEqual([true, true, true, false, false])
+  it('mostra cada letra na sua casa, mesmo com as anteriores vazias', () => {
+    const rows = boardRows(game({ guesses: ['salas'], slots: ['', '', '', '', 'a'], cursor: 0 }))
+    expect(rows[1]?.map((tile) => tile.letter)).toEqual(['', '', '', '', 'A'])
+    expect(rows[1]?.map((tile) => tile.selected)).toEqual([true, false, false, false, false])
     expect(rows[1]?.every((tile) => tile.result === null)).toBe(true)
+    expect(rows[0]?.some((tile) => tile.active || tile.selected)).toBe(false)
   })
 
   it('mostra a forma acentuada no chute certo', () => {
@@ -43,7 +45,7 @@ describe('boardRows', () => {
 
   it('não deixa casa ativa com a partida terminada', () => {
     const rows = boardRows(game({ guesses: ['macas'], status: 'won' }))
-    expect(rows.flat().some((tile) => tile.active)).toBe(false)
+    expect(rows.flat().some((tile) => tile.active || tile.selected)).toBe(false)
   })
 })
 

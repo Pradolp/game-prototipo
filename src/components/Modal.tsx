@@ -4,11 +4,13 @@ import styles from './Modal.module.css'
 interface ModalProps {
   labelId: string
   onClose: () => void
+  /** Ação principal da janela: quando existe, "Fechar" passa a ser a secundária. */
+  action?: { label: string; onClick: () => void }
   children: ReactNode
 }
 
 /** `<dialog>` nativo: prende o foco, fecha com Esc e devolve o foco ao sair. */
-export function Modal({ labelId, onClose, children }: ModalProps) {
+export function Modal({ labelId, onClose, action, children }: ModalProps) {
   const dialog = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -33,7 +35,17 @@ export function Modal({ labelId, onClose, children }: ModalProps) {
     >
       <div className={styles.content}>
         {children}
-        <button type="button" className={styles.close} onClick={() => dialog.current?.close()}>
+        {action && (
+          <button type="button" className={styles.button} onClick={action.onClick}>
+            {action.label}
+          </button>
+        )}
+        <button
+          type="button"
+          className={styles.button}
+          data-secondary={action ? true : undefined}
+          onClick={() => dialog.current?.close()}
+        >
           Fechar
         </button>
       </div>

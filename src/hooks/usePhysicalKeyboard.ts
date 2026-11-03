@@ -4,6 +4,8 @@ import type { GameAction } from '../game/game'
 function toAction(key: string): GameAction | null {
   if (key === 'Backspace') return { type: 'deleteLetter' }
   if (key === 'Enter') return { type: 'submitGuess' }
+  if (key === 'ArrowLeft') return { type: 'moveCursor', delta: -1 }
+  if (key === 'ArrowRight') return { type: 'moveCursor', delta: 1 }
   return /^\p{L}$/u.test(key) ? { type: 'typeLetter', letter: key } : null
 }
 
@@ -19,6 +21,8 @@ export function usePhysicalKeyboard(onAction: (action: GameAction) => void, enab
       // Enter em um botão focado pertence ao botão. Ao digitar, o foco volta para o jogo,
       // senão o Enter seguinte acionaria de novo a aba ou o ↻ tocado antes.
       if (button !== null && action.type === 'submitGuess') return
+      // Nas abas, as setas já servem para trocar de aba.
+      if (action.type === 'moveCursor' && button?.role === 'tab') return
       button?.blur()
       event.preventDefault()
       onAction(action)

@@ -14,13 +14,22 @@ export interface GameState {
   answer: string
   /** Chutes já enviados, na forma normalizada. */
   guesses: string[]
-  current: string
+  /** Casas da linha atual, em posições fixas: `''` marca uma casa vazia. */
+  slots: string[]
+  /** Casa selecionada na linha atual. */
+  cursor: number
   status: GameStatus
   feedback: GuessFeedback | null
 }
 
 export type GameAction =
-  { type: 'typeLetter'; letter: string } | { type: 'deleteLetter' } | { type: 'submitGuess' }
+  | { type: 'typeLetter'; letter: string }
+  | { type: 'deleteLetter' }
+  | { type: 'submitGuess' }
+  | { type: 'selectSlot'; index: number }
+  | { type: 'moveCursor'; delta: -1 | 1 }
+
+const emptySlots = (): string[] => Array<string>(WORD_LENGTH).fill('')
 
 export const createGame = ({
   date,
@@ -31,26 +40,56 @@ export const createGame = ({
   type,
   answer,
   guesses: [],
-  current: '',
+  slots: emptySlots(),
+  cursor: 0,
   status: 'playing',
   feedback: null,
 })
 
-function typeLetter(state: GameState, letter: string): GameState {
-  const key = normalize(letter)
-  if (!/^[a-z]$/.test(key) || state.current.length === WORD_LENGTH) return state
-  return { ...state, current: state.current + key, feedback: null }
+/** Próxima casa vazia à direita; senão, a primeira vazia; com a linha cheia, fica onde está. */
+function nextCursor(slots: readonly string[], cursor: number): number {
+  const isEmpty = (slot: string, index: number) => slot === '' && index > cursor
+  const right = slots.findIndex(isEmpty)
+  if (right !== -1) return right
+  const first = slots.indexOf('')
+  return first === -1 ? cursor : first
 }
 
-function submitGuess(state: GameState): GameState {
-  const { current, answer } = state
-  if (current.length < WORD_LENGTH) return { ...state, feedback: 'tooShort' }
-  if (!isValidGuess(current)) return { ...state, feedback: 'notInList' }
+const withSlot = (slots: readonly string[], index: number, letter: string): string[] =>
+  slots.map((slot, position) => (position === index ? letter : slot))
 
-  const guesses = [...state.guesses, current]
-  const hit = current === normalize(answer)
+function typeLetter(state: GameState, letter: string): GameState {
+  const key = normalize(letter)
+  if (!/^[a-z]$/.test(key)) return state
+  const slots = withSlot(state.slots, state.cursor, key)
+  return { ...state, slots, cursor: nextCursor(slots, state.cursor), feedback: null }
+}
+
+/** Apaga a casa selecionada; se ela estiver vazia, volta uma casa e apaga a letra de lá. */
+function deleteLetter(state: GameState): GameState {
+  const { slots, cursor } = state
+  if (slots[cursor] === '' && cursor === 0) return state
+  const target = slots[cursor] === '' ? cursor - 1 : cursor
+  return { ...state, slots: withSlot(slots, target, ''), cursor: target, feedback: null }
+}
+
+/** Limita à linha: as setas não dão a volta nas pontas. */
+const moveTo = (state: GameState, index: number): GameState => ({
+  ...state,
+  cursor: Math.min(Math.max(index, 0), WORD_LENGTH - 1),
+  feedback: null,
+})
+
+function submitGuess(state: GameState): GameState {
+  const { slots, answer } = state
+  if (slots.includes('')) return { ...state, feedback: 'tooShort' }
+  const guess = slots.join('')
+  if (!isValidGuess(guess)) return { ...state, feedback: 'notInList' }
+
+  const guesses = [...state.guesses, guess]
+  const hit = guess === normalize(answer)
   const status = hit ? 'won' : guesses.length === MAX_ATTEMPTS ? 'lost' : 'playing'
-  return { ...state, guesses, current: '', status, feedback: null }
+  return { ...state, guesses, slots: emptySlots(), cursor: 0, status, feedback: null }
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -59,8 +98,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'typeLetter':
       return typeLetter(state, action.letter)
     case 'deleteLetter':
-      return { ...state, current: state.current.slice(0, -1), feedback: null }
+      return deleteLetter(state)
     case 'submitGuess':
       return submitGuess(state)
+    case 'selectSlot':
+      return moveTo(state, action.index)
+    case 'moveCursor':
+      return moveTo(state, state.cursor + action.delta)
   }
 }

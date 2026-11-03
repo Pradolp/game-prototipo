@@ -67,7 +67,9 @@ function pressReset(state: AppState, roll: number): AppState {
   if (availability === 'locked') return withNotice(state, 'finishWord')
   if (availability === 'exhausted') return withNotice(state, 'noResets')
   const changed = resetGame(session, () => roll)
-  return changed ? { ...state, session: changed, revealRow: null, notice: null } : state
+  return changed
+    ? { ...state, session: changed, revealRow: null, notice: null, modal: null }
+    : state
 }
 
 function reducer(state: AppState, action: AppAction): AppState {

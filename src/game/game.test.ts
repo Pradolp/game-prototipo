@@ -10,6 +10,12 @@ const run = (state: GameState, actions: GameAction[]): GameState =>
 const typed = (word: string): GameAction[] =>
   [...word].map((letter) => ({ type: 'typeLetter', letter }))
 
+const word = (state: GameState): string => state.slots.join('')
+const del: GameAction = { type: 'deleteLetter' }
+const select = (index: number): GameAction => ({ type: 'selectSlot', index })
+const left: GameAction = { type: 'moveCursor', delta: -1 }
+const right: GameAction = { type: 'moveCursor', delta: 1 }
+
 const guess = (word: string): GameAction[] => [...typed(word), { type: 'submitGuess' }]
 
 describe('createGame', () => {
@@ -19,7 +25,8 @@ describe('createGame', () => {
       type: 'daily',
       answer: 'maçãs',
       guesses: [],
-      current: '',
+      slots: ['', '', '', '', ''],
+      cursor: 0,
       status: 'playing',
       feedback: null,
     })
@@ -27,16 +34,41 @@ describe('createGame', () => {
 })
 
 describe('digitar letra', () => {
-  it('acrescenta ao chute atual em minúsculas', () => {
-    expect(run(start(), typed('PE')).current).toBe('pe')
+  it('escreve em minúsculas e avança para a próxima casa', () => {
+    const state = run(start(), typed('PE'))
+    expect(state.slots).toEqual(['p', 'e', '', '', ''])
+    expect(state.cursor).toBe(2)
   })
 
   it('tira acento e cedilha', () => {
-    expect(run(start(), typed('áç')).current).toBe('ac')
+    expect(word(run(start(), typed('áç')))).toBe('ac')
   })
 
-  it('ignora a sexta letra', () => {
-    expect(run(start(), typed('pedras')).current).toBe('pedra')
+  it('com a linha cheia, fica na mesma casa e substitui a letra', () => {
+    const state = run(start(), typed('pedras'))
+    expect(word(state)).toBe('pedrs')
+    expect(state.cursor).toBe(4)
+  })
+
+  it('substitui a letra da casa selecionada', () => {
+    const state = run(start(), [...typed('pedra'), select(1), ...typed('a')])
+    expect(word(state)).toBe('padra')
+    expect(state.cursor).toBe(1)
+  })
+
+  it('pula as casas cheias à direita', () => {
+    const state = run(start(), [select(1), ...typed('a'), select(3), ...typed('b'), select(0)])
+    expect(run(state, typed('c')).cursor).toBe(2)
+  })
+
+  it('sem vazia à direita, volta para a primeira vazia a partir da esquerda', () => {
+    const state = run(start(), [select(4), ...typed('a')])
+    expect(state.slots).toEqual(['', '', '', '', 'a'])
+    expect(state.cursor).toBe(0)
+  })
+
+  it('preenche a última casa primeiro e as outras depois', () => {
+    expect(word(run(start(), [select(4), ...typed('a'), ...typed('prai')]))).toBe('praia')
   })
 
   it('ignora teclas que não são letras', () => {
@@ -44,7 +76,7 @@ describe('digitar letra', () => {
       type: 'typeLetter',
       letter,
     }))
-    expect(run(start(), actions).current).toBe('')
+    expect(word(run(start(), actions))).toBe('')
   })
 
   it('limpa o aviso anterior', () => {
@@ -54,12 +86,21 @@ describe('digitar letra', () => {
 })
 
 describe('apagar', () => {
-  it('remove a última letra', () => {
-    expect(run(start(), [...typed('ped'), { type: 'deleteLetter' }]).current).toBe('pe')
+  it('na casa com letra, apaga e continua nela', () => {
+    const state = run(start(), [...typed('pedra'), select(2), del])
+    expect(state.slots).toEqual(['p', 'e', '', 'r', 'a'])
+    expect(state.cursor).toBe(2)
   })
 
-  it('não faz nada com o chute vazio', () => {
-    expect(gameReducer(start(), { type: 'deleteLetter' }).current).toBe('')
+  it('na casa vazia, volta uma casa e apaga a letra dela', () => {
+    const state = run(start(), [...typed('ped'), del])
+    expect(state.slots).toEqual(['p', 'e', '', '', ''])
+    expect(state.cursor).toBe(2)
+  })
+
+  it('na 1ª casa vazia, não faz nada', () => {
+    const state = start()
+    expect(gameReducer(state, del)).toBe(state)
   })
 
   it('limpa o aviso anterior', () => {
@@ -68,27 +109,65 @@ describe('apagar', () => {
   })
 })
 
+describe('selecionar casa', () => {
+  it('seleciona casa vazia ou preenchida sem apagar nada', () => {
+    const state = run(start(), typed('ped'))
+    expect(gameReducer(state, select(4)).cursor).toBe(4)
+    const filled = gameReducer(state, select(1))
+    expect(filled.cursor).toBe(1)
+    expect(word(filled)).toBe('ped')
+  })
+
+  it('limpa o aviso anterior', () => {
+    expect(run(start(), [...guess('ped'), select(0)]).feedback).toBeNull()
+  })
+})
+
+describe('setas', () => {
+  it('movem a seleção uma casa', () => {
+    expect(run(start(), [right, right, left]).cursor).toBe(1)
+  })
+
+  it('não dão a volta nas pontas', () => {
+    expect(gameReducer(start(), left).cursor).toBe(0)
+    expect(run(start(), [select(4), right]).cursor).toBe(4)
+  })
+})
+
 describe('enviar chute', () => {
   it('guarda o chute válido e limpa a linha', () => {
     const state = run(start(), guess('pedra'))
     expect(state.guesses).toEqual(['pedra'])
-    expect(state.current).toBe('')
+    expect(state.slots).toEqual(['', '', '', '', ''])
+    expect(state.cursor).toBe(0)
     expect(state.status).toBe('playing')
   })
 
   it('com menos de 5 letras avisa e não gasta tentativa', () => {
     const state = run(start(), guess('ped'))
     expect(state.guesses).toEqual([])
-    expect(state.current).toBe('ped')
+    expect(word(state)).toBe('ped')
+    expect(state.feedback).toBe('tooShort')
+  })
+
+  it('com um buraco na linha avisa e não gasta tentativa', () => {
+    const state = run(start(), [...typed('pedra'), select(2), del, { type: 'submitGuess' }])
+    expect(state.guesses).toEqual([])
+    expect(state.slots).toEqual(['p', 'e', '', 'r', 'a'])
     expect(state.feedback).toBe('tooShort')
   })
 
   it('fora da lista avisa, não gasta tentativa e mantém as letras', () => {
     const state = run(start(), guess('xxxxx'))
     expect(state.guesses).toEqual([])
-    expect(state.current).toBe('xxxxx')
+    expect(word(state)).toBe('xxxxx')
     expect(state.feedback).toBe('notInList')
     expect(state.status).toBe('playing')
+  })
+
+  it('fora da lista mantém a casa selecionada', () => {
+    const state = run(start(), [...typed('xxxxx'), select(2), { type: 'submitGuess' }])
+    expect(state.cursor).toBe(2)
   })
 
   it('limpa o aviso depois de um chute válido', () => {
@@ -127,6 +206,8 @@ describe('fim de jogo', () => {
     expect(run(won, typed('a'))).toBe(won)
     expect(gameReducer(won, { type: 'deleteLetter' })).toBe(won)
     expect(gameReducer(won, { type: 'submitGuess' })).toBe(won)
+    expect(gameReducer(won, select(2))).toBe(won)
+    expect(gameReducer(won, right)).toBe(won)
   })
 })
 
