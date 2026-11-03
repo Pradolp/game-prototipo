@@ -6,7 +6,8 @@ import { remainingResets, resetAvailability } from '../game/resets'
 import type { Rng } from '../game/rules'
 import { activeGame, createSession, playAction, resetGame, switchGame } from '../game/session'
 import type { Session } from '../game/session'
-import { createStats, getCurrentStreak, updateStats, type Stats } from '../game/stats'
+import { getCurrentStreak, updateStats, type Stats } from '../game/stats'
+import { loadSession, loadStats, saveSession, saveStats } from '../storage/progress'
 import { prefersReducedMotion, REVEAL_MS } from '../styles/motion'
 
 export type ModalKind = 'help' | 'stats'
@@ -29,13 +30,17 @@ interface AppState {
   noticeCount: number
 }
 
-/** `roll` chega pronto na ação: o reducer precisa ser puro, e o StrictMode o executa duas vezes. */
+/**
+ * `roll` e `today` chegam prontos na ação: o reducer precisa ser puro, e o StrictMode o
+ * executa duas vezes. Quem traz `today` confere a virada do dia antes de agir.
+ */
 type AppAction =
-  | { type: 'play'; action: GameAction }
-  | { type: 'switchTab'; target: GameType; roll: number }
-  | { type: 'pressReset'; roll: number }
+  | { type: 'syncDay'; today: string }
+  | { type: 'play'; action: GameAction; today: string }
+  | { type: 'switchTab'; target: GameType; roll: number; today: string }
+  | { type: 'pressReset'; roll: number; today: string }
   | { type: 'endReveal' }
-  | { type: 'openModal'; modal: ModalKind }
+  | { type: 'openModal'; modal: ModalKind; today: string }
   | { type: 'closeModal' }
   | { type: 'dismissNotice' }
 
@@ -72,8 +77,10 @@ function pressReset(state: AppState, roll: number): AppState {
     : state
 }
 
-function reducer(state: AppState, action: AppAction): AppState {
+function applyAction(state: AppState, action: AppAction): AppState {
   switch (action.type) {
+    case 'syncDay':
+      return state
     case 'play':
       return play(state, action.action)
     case 'switchTab':
@@ -98,9 +105,28 @@ function reducer(state: AppState, action: AppAction): AppState {
   }
 }
 
+const startDay = (state: AppState, today: string): AppState => ({
+  ...state,
+  session: createSession(today),
+  revealRow: null,
+  modal: null,
+  notice: null,
+})
+
+function reducer(state: AppState, action: AppAction): AppState {
+  if (!('today' in action) || action.today === state.session.date) {
+    return applyAction(state, action)
+  }
+  const newDay = startDay(state, action.today)
+  // Jogada e reset miravam a palavra que acabou de sair da tela: valem só para o dia velho.
+  return action.type === 'play' || action.type === 'pressReset'
+    ? newDay
+    : applyAction(newDay, action)
+}
+
 const createState = (now: () => Date): AppState => ({
-  session: createSession(todayKey(now())),
-  stats: createStats(),
+  session: loadSession(todayKey(now())),
+  stats: loadStats(),
   revealRow: null,
   modal: null,
   notice: null,
@@ -113,6 +139,22 @@ export function useGame(now: () => Date, rng: Rng) {
   const [state, dispatch] = useReducer(reducer, now, createState)
   const { session, stats, revealRow, modal, notice } = state
   const game = activeGame(session)
+  const today = useCallback(() => todayKey(now()), [now])
+
+  useEffect(() => saveSession(session), [session])
+  useEffect(() => saveStats(stats), [stats])
+
+  useEffect(() => {
+    const syncDay = () => {
+      if (document.visibilityState === 'visible') dispatch({ type: 'syncDay', today: today() })
+    }
+    document.addEventListener('visibilitychange', syncDay)
+    window.addEventListener('focus', syncDay)
+    return () => {
+      document.removeEventListener('visibilitychange', syncDay)
+      window.removeEventListener('focus', syncDay)
+    }
+  }, [today])
 
   useEffect(() => {
     if (revealRow === null) return
@@ -129,15 +171,21 @@ export function useGame(now: () => Date, rng: Rng) {
     return () => clearTimeout(timer)
   }, [notice])
 
-  const play = useCallback((action: GameAction) => dispatch({ type: 'play', action }), [])
-  const switchTab = useCallback(
-    (target: GameType) => dispatch({ type: 'switchTab', target, roll: rng() }),
-    [rng],
+  const play = useCallback(
+    (action: GameAction) => dispatch({ type: 'play', action, today: today() }),
+    [today],
   )
-  const pressReset = useCallback(() => dispatch({ type: 'pressReset', roll: rng() }), [rng])
+  const switchTab = useCallback(
+    (target: GameType) => dispatch({ type: 'switchTab', target, roll: rng(), today: today() }),
+    [rng, today],
+  )
+  const pressReset = useCallback(
+    () => dispatch({ type: 'pressReset', roll: rng(), today: today() }),
+    [rng, today],
+  )
   const openModal = useCallback(
-    (kind: ModalKind) => dispatch({ type: 'openModal', modal: kind }),
-    [],
+    (kind: ModalKind) => dispatch({ type: 'openModal', modal: kind, today: today() }),
+    [today],
   )
   const closeModal = useCallback(() => dispatch({ type: 'closeModal' }), [])
 

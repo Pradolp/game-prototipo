@@ -83,6 +83,7 @@ Duas abas lado a lado no **canto superior esquerdo**. O jogo sempre abre em "Pal
 - Estatísticas: jogos, vitórias, sequência atual, melhor sequência, data da última vitória na palavra do dia, distribuição por número de tentativas.
 - Preferências: modo daltônico, tamanho da fonte.
 - Sempre envolva leitura e escrita em `try/catch` e use valores padrão quando o storage falhar.
+- **Virada do dia com a página aberta:** ao voltar para a aba do navegador (`visibilitychange`, `focus`) e antes de cada ação, o jogo confere `todayKey`. Se o dia mudou, inicia a sessão nova e volta para "Palavra do dia". Jogada ou reset feitos nesse instante são descartados, porque miravam a palavra que saiu da tela.
 
 ## Paleta: Tokyo Night
 Decisão do autor: o jogo usa as cores do tema **Tokyo Night**, o mesmo do terminal dele (Ptyxis). O tema é escuro e é o padrão do jogo. Valores exatos da paleta do terminal:
