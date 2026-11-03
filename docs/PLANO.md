@@ -6,6 +6,8 @@
 - **Modos:** só 1 palavra no MVP. Os modos com 2 e 4 palavras ficam no backlog.
 - **Dados:** localStorage, sem login e sem servidor.
 - **Nome:** ainda não definido; "Palavrinha" é provisório.
+- **Repositório:** continua público no GitHub (`Pradolp/game-prototipo`).
+- **Cores:** paleta Tokyo Night, igual à do terminal do autor; detalhes no `CLAUDE.md`.
 
 ## O que precisa ser feito
 | Fase | Entrega | Pronto quando |
@@ -15,7 +17,7 @@
 | 2. Lógica do jogo | `normalize`, `evaluateGuess` (letras repetidas), `isValidGuess`, `getDailyWord`, `pickExtraWord`, controle de resets, estatísticas | Testes unitários cobrindo os casos-limite |
 | 3. Interface | Header (título, ajuda, estatísticas, **Reset ↻ N** no canto superior direito), Board, Teclado virtual, Toasts, Modais | Jogável no navegador em 360px e no desktop |
 | 4. Persistência | Partida, resets, estatísticas e preferências sobrevivem ao recarregar | Teste E2E: jogar, recarregar e ver o mesmo estado |
-| 5. Acessibilidade e polimento | Alto contraste, fonte ajustável, aria-labels, reduced-motion, animações | Revisão de acessibilidade sem pendências graves |
+| 5. Acessibilidade e polimento | Modo daltônico, fonte ajustável, aria-labels, reduced-motion, animações | Revisão de acessibilidade sem pendências graves |
 | 6. Deploy | Vercel ou GitHub Pages + link para a jogadora | Abre no celular dela |
 | Backlog | PWA instalável, modos com 2 e 4 palavras, compartilhar resultado, app (Capacitor) | — |
 

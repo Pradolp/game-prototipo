@@ -13,11 +13,11 @@ A **diferença principal** é o botão **Reset**, no canto superior direito, que
 ## Stack (pré-requisitos)
 | Item | Escolha | Motivo |
 |---|---|---|
-| Runtime | **Node.js 24 LTS** (via `nvm`) | Ainda **não está instalado** nesta máquina |
+| Runtime | **Node.js 24 LTS** (via `nvm`, versão em `.nvmrc`) | Instalado na Fase 0 |
 | Gerenciador de pacotes | **npm** | Já vem com o Node, menos uma coisa para instalar |
 | Build/dev server | **Vite** | Rápido e simples |
-| UI | **React 19 + TypeScript (strict)** | Componentes simples, fácil de virar app mobile depois (React Native/Capacitor) |
-| Estilo | **CSS Modules + variáveis CSS** | Sem dependência extra; os temas (claro/escuro/alto contraste) usam variáveis |
+| UI | **React 19 + TypeScript 6.0 (strict)** | Componentes simples, fácil de virar app mobile depois (React Native/Capacitor). TS fixado em `~6.0.3` porque o `typescript-eslint` exige `<6.1`; suba quando ele aceitar o 7 |
+| Estilo | **CSS Modules + variáveis CSS** | Sem dependência extra; o tema Tokyo Night (padrão) e o modo daltônico usam variáveis |
 | Estado | `useReducer` + hooks próprios | O jogo é pequeno, não precisa de Redux/Zustand |
 | Persistência | **localStorage** (sem backend, sem login) | Tudo fica no aparelho |
 | Testes unitários | **Vitest + Testing Library** | Lógica do jogo 100% testada |
@@ -38,9 +38,9 @@ npm run lint
 
 ## Regras do jogo (MVP)
 - **Modo:** só 1 palavra. Palavras de **5 letras**, **6 tentativas**.
-- **Cores:** letra certa no lugar certo, letra certa no lugar errado, letra ausente. Use paleta própria e ofereça **modo daltônico/alto contraste**.
+- **Cores:** letra certa no lugar certo, letra certa no lugar errado, letra ausente. Use a paleta **Tokyo Night** (seção abaixo) e ofereça **modo daltônico**.
 - **Letras repetidas:** use o algoritmo de duas passadas. Primeiro marque as letras no lugar certo, depois as letras em lugar errado, descontando o que sobrou de cada letra na resposta. Isso precisa ter testes específicos (ex.: resposta `CASAL`, chute `AAAAA`).
-- **Acentos e Ç:** a jogadora digita sem acento. A comparação é feita com a palavra **normalizada** (sem acento, `ç`→`c`), e a exibição mostra a forma acentuada (`MAÇÃ`, `PÉROLA`) quando a palavra é revelada ou acertada.
+- **Acentos e Ç:** a jogadora digita sem acento. A comparação é feita com a palavra **normalizada** (sem acento, `ç`→`c`), e a exibição mostra a forma acentuada (`MAÇÃS`, `LÁPIS`) quando a palavra é revelada ou acertada.
 - **Validação:** o chute precisa estar na lista de palavras válidas; se não estiver, mostre uma mensagem e não gaste a tentativa.
 - **Teclado virtual** na tela, com as cores de cada letra, e suporte ao teclado físico.
 
@@ -56,13 +56,34 @@ npm run lint
 - Partida atual: data, tipo (`daily` | `extra`), resposta, chutes, status.
 - Resets: `{ date, used }`.
 - Estatísticas: jogos, vitórias, sequência atual, melhor sequência, distribuição por número de tentativas.
-- Preferências: tema, alto contraste, tamanho da fonte.
+- Preferências: modo daltônico, tamanho da fonte.
 - Sempre envolva leitura e escrita em `try/catch` e use valores padrão quando o storage falhar.
+
+## Paleta: Tokyo Night
+Decisão do autor: o jogo usa as cores do tema **Tokyo Night**, o mesmo do terminal dele (Ptyxis). O tema é escuro e é o padrão do jogo. Valores exatos da paleta do terminal:
+
+| Token CSS | Cor | Uso |
+|---|---|---|
+| `--color-bg` | `#1A1B26` | Fundo da página |
+| `--color-text` | `#C0CAF5` | Texto principal |
+| `--color-text-muted` | `#A9B1D6` | Texto secundário, borda da casa ativa |
+| `--color-surface` | `#414868` | Casa "ausente", teclas sem resultado, bordas de casa vazia |
+| `--color-correct` | `#9ECE6A` | Letra no lugar certo (verde) |
+| `--color-present` | `#E0AF68` | Letra no lugar errado (amarelo) |
+| `--color-accent` | `#7AA2F7` | Botões e links; casa "certa" no modo daltônico (azul) |
+| `--color-danger` | `#F7768E` | Erros e ações destrutivas |
+| `--color-extra-1`, `--color-extra-2` | `#BB9AF7`, `#7DCFFF` | Detalhes (roxo, ciano) |
+
+Regras de uso (contraste medido em WCAG):
+- Texto sobre verde, amarelo ou azul é **escuro** (`#1A1B26`): 9,3:1, 8,5:1 e 6,8:1. Sobre `#414868`, é **claro** (`#C0CAF5`): 5,5:1.
+- **Verde e amarelo têm quase a mesma luminosidade** (1,09:1): em tela ruim ou para quem é daltônico eles podem se confundir. Por isso a casa "lugar errado" também precisa de uma **marca não colorida** (ex.: borda tracejada ou um ponto no canto), inclusive no modo normal.
+- **Modo daltônico:** troca o verde pelo azul `--color-accent` (certa = azul, lugar errado = amarelo), mantendo a marca.
+- Use só os tokens; não escreva cores soltas nos componentes.
 
 ## Acessibilidade (a jogadora é a prioridade)
 - Fonte grande e legível; tamanho ajustável nas preferências.
 - Teclas do teclado virtual com **pelo menos 44×44px**.
-- Contraste AA no mínimo; modo alto contraste/daltônico.
+- Contraste AA no mínimo; modo daltônico.
 - Nada depende só da cor: o resultado de cada letra também vai em `aria-label`.
 - Animações curtas e respeito a `prefers-reduced-motion`.
 - Funciona bem em tela de celular (360px) e de computador.

@@ -16,7 +16,7 @@ Os 7 plugins do `CLAUDE.md` já estão instalados para o usuário (valem em qual
 ```
 Leia o CLAUDE.md e o docs/PLANO.md. Execute a Fase 0:
 1. O Node não está instalado. Instale o nvm e o Node 24 LTS (me mostre os comandos antes de rodar) e crie um .nvmrc.
-2. Rode git init e crie um .gitignore adequado.
+2. Rode git init(repostirório já esta criado https://github.com/Pradolp/game-prototipo.git) pode ir adicionadno commits quando sentir necessidade e crie um .gitignore adequado.
 3. Faça o scaffold com Vite + React + TypeScript (strict) na raiz do projeto, sem apagar CLAUDE.md nem docs/.
 4. Configure ESLint + Prettier, Vitest + Testing Library (jsdom) e Playwright (projetos: Desktop Chrome e Pixel 7).
 5. Crie os scripts do package.json: dev, build, preview, test, test:e2e, lint, format.
@@ -31,7 +31,10 @@ Leia o CLAUDE.md. Execute a Fase 1 (lista de palavras):
 2. Crie scripts/build-wordlist.ts. Ele baixa a lista para uma pasta separada (dados não confiáveis), filtra palavras de exatamente 5 letras depois da normalização (sem acento, ç->c), remove nomes próprios, siglas e palavras com hífen ou caracteres fora de a-z, e preserva a forma acentuada.
 3. Gere src/data/valid.ts (todas as palavras válidas) e src/data/answers.ts (palavras COMUNS para resposta, ~1.000-2.000). Para escolher as comuns, use um critério de frequência (por exemplo, uma lista de frequência de corpus aberto), também com licença verificada. Remova palavrões e termos ofensivos.
 4. Escreva docs/WORDLIST.md com as fontes, as licenças, os critérios e como regerar as listas.
-5. Me mostre 50 respostas aleatórias para eu conferir se são palavras do dia a dia.
+5. Trate as colisões de normalização: palavras diferentes podem virar a mesma forma sem acento (ex.: SÁBIA, SABIA e SABIÁ). Cada forma normalizada deve aparecer uma só vez em answers, com uma forma de exibição definida; informe quantas colisões houve e a regra usada.
+6. O repositório é público: as fontes só podem ser usadas se a licença permitir redistribuir os dados, e o aviso de licença exigido deve ir junto.
+7. Me mostre 50 respostas aleatórias para eu conferir se são palavras do dia a dia.
+8. Ao final, faça o commit incluindo as alterações pendentes em CLAUDE.md e docs/.
 ```
 
 ## Fase 2: Lógica do jogo (TDD)
@@ -45,13 +48,13 @@ Leia o CLAUDE.md. Execute a Fase 2, escrevendo os testes ANTES da implementaçã
 - Resets: canReset(state, today), applyReset(state, today, rng) sorteia uma palavra diferente da do dia e das já jogadas hoje, com máximo de 3 por dia e renovação quando muda o dia.
 - Estatísticas: updateStats(stats, result).
 - Reducer do jogo: digitar letra, apagar, enviar chute (inválido não gasta tentativa), vitória, derrota.
-Tudo com datas e RNG injetáveis. Pronto quando a cobertura de src/game/ for >= 95%.
+Tudo com datas e RNG injetáveis. Apague o src/game/example.test.ts. Pronto quando a cobertura de src/game/ for >= 95%.
 ```
 
 ## Fase 3: Interface
 ```
 Leia o CLAUDE.md. Use a skill frontend-design. Execute a Fase 3:
-- Crie uma identidade visual PRÓPRIA (nome provisório "Palavrinha"), acolhedora e com fonte grande, sem copiar Termo/Wordle. Proponha 2 opções de paleta antes de implementar.
+- Use a paleta Tokyo Night exatamente como está na seção "Paleta" do CLAUDE.md, com os tokens em src/styles/, e não invente outra. A identidade visual continua PRÓPRIA (nome provisório "Palavrinha"), acolhedora e com fonte grande, sem copiar o layout de Termo/Wordle.
 - Header: título no centro, ícones de Ajuda e Estatísticas, e no CANTO SUPERIOR DIREITO o botão Reset mostrando quantos restam (ex.: "↻ 3"). Com 0, ele fica desabilitado com o texto "Novas palavras amanhã". Indique se a partida atual é "Palavra do dia" ou "Palavra extra 1/3".
 - Board 6x5 com animação de virar a letra (respeitando prefers-reduced-motion), teclado virtual em PT-BR com teclas >= 44px e cores por letra, e suporte ao teclado físico.
 - Toasts ("Palavra não encontrada", "Faltam letras"), modal de ajuda, modal de fim de jogo (mostra a palavra acentuada, as estatísticas e quanto falta para a próxima palavra do dia) e confirmação ao resetar no meio da partida.
@@ -70,7 +73,7 @@ Leia o CLAUDE.md. Execute a Fase 4: crie src/storage com chaves versionadas pala
 
 ## Fase 5: Acessibilidade e polimento
 ```
-Leia o CLAUDE.md. Execute a Fase 5: adicione o tema alto contraste/daltônico, o ajuste de tamanho de fonte e o tema escuro; aria-labels em cada letra com o resultado ("letra A, posição certa"); foco visível e navegação por teclado nos modais. Rode uma auditoria (axe via Playwright) e corrija tudo o que for sério ou crítico. Depois rode /code-review e corrija os achados.
+Leia o CLAUDE.md. Execute a Fase 5: adicione o modo daltônico (conforme a seção "Paleta" do CLAUDE.md) e o ajuste de tamanho de fonte; aria-labels em cada letra com o resultado ("letra A, posição certa"); foco visível e navegação por teclado nos modais. Rode uma auditoria (axe via Playwright) e corrija tudo o que for sério ou crítico. Depois rode /code-review e corrija os achados.
 ```
 
 ## Fase 6: Deploy
