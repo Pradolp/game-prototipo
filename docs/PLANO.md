@@ -15,7 +15,7 @@
 | 0. Setup | Node 24 via nvm, `git init`, scaffold Vite+React+TS, ESLint/Prettier, Vitest, Playwright | `npm run dev`, `test` e `lint` passam |
 | 1. Lista de palavras | Script que gera `answers` e `valid` a partir de uma fonte com licença OK; `docs/WORDLIST.md` | Listas versionadas, com acentos preservados e sem nomes próprios |
 | 2. Lógica do jogo | `normalize`, `evaluateGuess` (letras repetidas), `isValidGuess`, `getDailyWord`, sorteio da aba CHUTE, controle de resets, estatísticas | Testes unitários cobrindo os casos-limite |
-| 3. Interface | Header (abas **Palavra do dia** e **CHUTE** no canto superior esquerdo, título, ajuda, estatísticas, **↻ N** no canto superior direito só na aba CHUTE), Board, Teclado virtual, Toasts, Modais | Jogável no navegador em 360px e no desktop |
+| 3. Interface | Header (abas **Palavra do dia** e **CHUTE** no canto superior esquerdo, ajuda, estatísticas, **↻ N** no canto superior direito só na aba CHUTE), Board, Teclado virtual, Toasts, Modais | Jogável no navegador em 360px e no desktop |
 | 4. Persistência | Partidas das duas abas, resets, estatísticas e preferências sobrevivem ao recarregar | Teste E2E: jogar, recarregar e ver o mesmo estado |
 | 5. Acessibilidade e polimento | Modo daltônico, fonte ajustável, aria-labels, reduced-motion, animações | Revisão de acessibilidade sem pendências graves |
 | 6. Deploy | Vercel ou GitHub Pages + link para a jogadora | Abre no celular dela |
