@@ -26,7 +26,7 @@ A **diferença principal** é a aba **CHUTE**, ao lado da aba **Palavra do dia**
 | Testes unitários | **Vitest + Testing Library** | Lógica do jogo 100% testada |
 | Testes E2E | **Playwright** + `@axe-core/playwright` | Testa o fluxo real no navegador, inclusive em tamanho de celular, e audita a acessibilidade |
 | Lint/format | ESLint + Prettier | — |
-| Hospedagem | **Vercel** ou **GitHub Pages** (estático, gratuito) | Definir na fase de deploy |
+| Hospedagem | **Vercel** (estático, gratuito) | Permite cabeçalhos de segurança, configurados em `vercel.json` |
 | Futuro | PWA (`vite-plugin-pwa`) → depois, se precisar, Capacitor para Android/iOS | Fora do MVP |
 
 ## Comandos (depois do scaffold)
